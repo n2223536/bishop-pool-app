@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Home() {
   const [bgImageIndex, setBgImageIndex] = useState(0);
-  const poolImages = ['pool-family.jpg', 'pool-splash.jpg', 'pool-people.jpg', 'pool-outside.jpg'];
+  const poolImages = ['pool-bishop-estates.jpg', 'pool-family.jpg', 'pool-splash.jpg', 'pool-people.jpg', 'pool-outside.jpg'];
   
   // Rotate background image every 8 seconds
   useEffect(() => {
