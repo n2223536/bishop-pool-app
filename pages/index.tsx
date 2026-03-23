@@ -23,9 +23,13 @@ export default function Home() {
   const [showTerms, setShowTerms] = useState(false);
   const [hasReadTerms, setHasReadTerms] = useState(false);
   const [showGuestPolicy, setShowGuestPolicy] = useState(false);
+  const [hasReadGuestPolicy, setHasReadGuestPolicy] = useState(false);
   const [showPartyPolicy, setShowPartyPolicy] = useState(false);
+  const [hasReadPartyPolicy, setHasReadPartyPolicy] = useState(false);
   const [showSitterPolicy, setShowSitterPolicy] = useState(false);
+  const [hasReadSitterPolicy, setHasReadSitterPolicy] = useState(false);
   const [showMembershipRules, setShowMembershipRules] = useState(false);
+  const [hasReadMembershipRules, setHasReadMembershipRules] = useState(false);
   const [hasSitters, setHasSitters] = useState(false);
   const [numAdults, setNumAdults] = useState(1);
   const [numChildren, setNumChildren] = useState(0);
@@ -274,7 +278,10 @@ export default function Home() {
             </div>
             <button
               type="button"
-              onClick={() => setShowSitterPolicy(false)}
+              onClick={() => {
+                setHasReadSitterPolicy(true);
+                setShowSitterPolicy(false);
+              }}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -287,7 +294,7 @@ export default function Home() {
                 fontSize: '14px',
               }}
             >
-              Close
+              I Have Read & Understand
             </button>
           </div>
         </div>
@@ -315,7 +322,10 @@ export default function Home() {
             </div>
             <button
               type="button"
-              onClick={() => setShowGuestPolicy(false)}
+              onClick={() => {
+                setHasReadGuestPolicy(true);
+                setShowGuestPolicy(false);
+              }}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -328,7 +338,7 @@ export default function Home() {
                 fontSize: '14px',
               }}
             >
-              Close
+              I Have Read & Understand
             </button>
           </div>
         </div>
@@ -358,7 +368,10 @@ export default function Home() {
             </div>
             <button
               type="button"
-              onClick={() => setShowPartyPolicy(false)}
+              onClick={() => {
+                setHasReadPartyPolicy(true);
+                setShowPartyPolicy(false);
+              }}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -371,7 +384,7 @@ export default function Home() {
                 fontSize: '14px',
               }}
             >
-              Close
+              I Have Read & Understand
             </button>
           </div>
         </div>
@@ -470,7 +483,10 @@ export default function Home() {
             </div>
             <button
               type="button"
-              onClick={() => setShowMembershipRules(false)}
+              onClick={() => {
+                setHasReadMembershipRules(true);
+                setShowMembershipRules(false);
+              }}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -483,7 +499,7 @@ export default function Home() {
                 fontSize: '14px',
               }}
             >
-              Got It
+              I Have Read & Understand
             </button>
           </div>
         </div>
@@ -756,7 +772,8 @@ export default function Home() {
                         name="acceptSitterPolicy"
                         checked={formData.acceptSitterPolicy}
                         onChange={handleCheckboxChange}
-                        style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
+                        disabled={!hasReadSitterPolicy}
+                        style={{ marginTop: '4px', width: '20px', height: '20px', cursor: hasReadSitterPolicy ? 'pointer' : 'not-allowed' }}
                         required
                       />
                       <div style={{ fontSize: '13px', color: '#374151' }}>
@@ -787,7 +804,8 @@ export default function Home() {
                       name="acceptMembershipRules"
                       checked={formData.acceptMembershipRules}
                       onChange={handleCheckboxChange}
-                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
+                      disabled={!hasReadMembershipRules}
+                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: hasReadMembershipRules ? 'pointer' : 'not-allowed' }}
                       required
                     />
                     <div style={{ fontSize: '13px', color: '#374151' }}>
@@ -808,7 +826,8 @@ export default function Home() {
                       name="acceptGuestPolicy"
                       checked={formData.acceptGuestPolicy}
                       onChange={handleCheckboxChange}
-                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
+                      disabled={!hasReadGuestPolicy}
+                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: hasReadGuestPolicy ? 'pointer' : 'not-allowed' }}
                       required
                     />
                     <div style={{ fontSize: '13px', color: '#374151' }}>
@@ -828,7 +847,8 @@ export default function Home() {
                       name="acceptPartyPolicy"
                       checked={formData.acceptPartyPolicy}
                       onChange={handleCheckboxChange}
-                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
+                      disabled={!hasReadPartyPolicy}
+                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: hasReadPartyPolicy ? 'pointer' : 'not-allowed' }}
                       required
                     />
                     <div style={{ fontSize: '13px', color: '#374151' }}>
