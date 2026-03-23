@@ -919,7 +919,7 @@ export default function Home() {
                           placeholder="First and Last Name"
                           value={formData.adultSignatures[index]?.name || ''}
                           onChange={(e) => handleNestedChange('adultSignatures', index, 'name', e.target.value)}
-                          style={{ padding: '12px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
+                          style={{ padding: '12px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%', boxSizing: 'border-box' }}
                           required
                         />
                       </div>
