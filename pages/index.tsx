@@ -894,9 +894,9 @@ export default function Home() {
                   <div style={{ fontSize: '28px', marginRight: '12px' }}>👤</div>
                   <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Signatures</h3>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center', width: '100%' }}>
                   {Array.from({ length: numAdults }).map((_, index) => (
-                    <div key={index} style={{ padding: '20px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff', margin: '0 auto', maxWidth: '600px', width: '100%' }}>
+                    <div key={index} style={{ padding: '20px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff', maxWidth: '600px', width: '100%' }}>
                       <p style={{ fontSize: '14px', fontWeight: '600', color: '#667eea', marginBottom: '16px' }}>Member #{index + 1}</p>
                       
                       <div style={{ marginBottom: '16px' }}>
