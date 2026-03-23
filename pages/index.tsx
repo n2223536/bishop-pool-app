@@ -114,7 +114,23 @@ export default function Home() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!hasReadTerms || !formData.acceptTerms) {
-      alert('You must read and accept the terms');
+      alert('You must read and accept the waiver agreement');
+      return;
+    }
+    if (!formData.acceptGuestPolicy) {
+      alert('You must accept the Guest Policy');
+      return;
+    }
+    if (!formData.acceptPartyPolicy) {
+      alert('You must accept the Party Policy');
+      return;
+    }
+    if (!formData.acceptMembershipRules) {
+      alert('You must accept the Membership Rules & FAQ');
+      return;
+    }
+    if (!formData.acceptSitterPolicy) {
+      alert('You must accept the Sitter Policy');
       return;
     }
 

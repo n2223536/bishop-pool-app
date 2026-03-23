@@ -11,6 +11,9 @@ interface Member {
   membershipType: string;
   signupDate: string;
   paymentStatus: 'pending' | 'paid' | 'verified';
+  priorKeyfobNumber?: string;
+  membershipLevel?: string;
+  paymentMethod?: string;
 }
 
 export default function Admin() {
@@ -173,7 +176,9 @@ export default function Admin() {
                 <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Name</th>
                 <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Email</th>
                 <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Phone</th>
-                <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Membership</th>
+                <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Keyfob #</th>
+                <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Membership Type</th>
+                <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Payment Method</th>
                 <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Status</th>
                 <th style={{ textAlign: 'left', padding: '16px', fontWeight: '600', color: '#374151' }}>Actions</th>
               </tr>
@@ -182,11 +187,19 @@ export default function Admin() {
               {filteredMembers.map((member) => (
                 <tr key={member.id} style={{ borderBottom: '1px solid #e5e7eb', background: 'white' }}>
                   <td style={{ padding: '16px', color: '#1f2937', fontWeight: '600' }}>
-                    {member.firstName} {member.lastName}
+                    {member.firstName || 'N/A'} {member.lastName || 'N/A'}
                   </td>
-                  <td style={{ padding: '16px', color: '#374151' }}>{member.email}</td>
-                  <td style={{ padding: '16px', color: '#374151' }}>{member.phone}</td>
-                  <td style={{ padding: '16px', color: '#374151' }}>{member.membershipType}</td>
+                  <td style={{ padding: '16px', color: '#374151' }}>{member.email || 'N/A'}</td>
+                  <td style={{ padding: '16px', color: '#374151' }}>{member.phone || 'N/A'}</td>
+                  <td style={{ padding: '16px', color: '#374151', fontWeight: '600', background: '#fffbeb' }}>
+                    {member.priorKeyfobNumber || 'Pending'}
+                  </td>
+                  <td style={{ padding: '16px', color: '#374151', fontWeight: '500' }}>
+                    {member.membershipLevel ? member.membershipLevel.charAt(0).toUpperCase() + member.membershipLevel.slice(1) : 'N/A'}
+                  </td>
+                  <td style={{ padding: '16px', color: '#374151', fontWeight: '500' }}>
+                    {member.paymentMethod ? member.paymentMethod.charAt(0).toUpperCase() + member.paymentMethod.slice(1) : 'N/A'}
+                  </td>
                   <td style={{ padding: '16px' }}>
                     <select
                       value={member.paymentStatus}
