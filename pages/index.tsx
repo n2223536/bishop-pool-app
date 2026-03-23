@@ -732,7 +732,7 @@ export default function Home() {
                         <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Draw Signature Below *</label>
                         <div style={{ border: '2px solid #dbeafe', borderRadius: '6px', background: 'white', cursor: 'crosshair', overflow: 'hidden' }}>
                           <canvas
-                            ref={(el) => (canvasRefs[`sig-${index}`] = el)}
+                            ref={(el) => { if (el) canvasRefs[`sig-${index}`] = el; }}
                             width={400}
                             height={120}
                             onMouseDown={(e) => {
