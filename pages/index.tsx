@@ -25,6 +25,7 @@ export default function Home() {
   const [showGuestPolicy, setShowGuestPolicy] = useState(false);
   const [showPartyPolicy, setShowPartyPolicy] = useState(false);
   const [showSitterPolicy, setShowSitterPolicy] = useState(false);
+  const [showMembershipRules, setShowMembershipRules] = useState(false);
   const [hasSitters, setHasSitters] = useState(false);
   const [numAdults, setNumAdults] = useState(1);
   const [numChildren, setNumChildren] = useState(0);
@@ -403,6 +404,61 @@ export default function Home() {
         </div>
       )}
 
+      {showMembershipRules && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+          <div style={{ background: 'white', borderRadius: '12px', maxWidth: '700px', maxHeight: '80vh', overflow: 'auto', padding: '32px' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', marginBottom: '20px' }}>Membership Rules & FAQ</h2>
+            <div style={{ color: '#374151', lineHeight: '1.7', fontSize: '13px', marginBottom: '20px' }}>
+              <p style={{ marginBottom: '16px', fontWeight: '600' }}>MEMBERSHIP BENEFITS</p>
+              <ul style={{ marginLeft: '20px', marginBottom: '16px' }}>
+                <li>Unlimited access to pool during operating hours</li>
+                <li>Access to changing facilities & lockers</li>
+                <li>Participation in swim team (Barracudas)</li>
+                <li>Ability to host member-only parties</li>
+                <li>Priority booking for reserved areas</li>
+              </ul>
+              
+              <p style={{ marginBottom: '12px', fontWeight: '600' }}>MEMBERSHIP RULES</p>
+              <ul style={{ marginLeft: '20px', marginBottom: '16px' }}>
+                <li>Members must be in good standing (fees paid)</li>
+                <li>Guests must be accompanied by member at all times</li>
+                <li>Pool hours: Dawn to Dusk (seasonal)</li>
+                <li>NO running, horseplay, or diving in shallow end</li>
+                <li>NO glass containers, alcohol, or drugs</li>
+                <li>NO pets (service animals allowed)</li>
+                <li>Children under 8 require constant supervision</li>
+                <li>Photography/recording requires consent</li>
+              </ul>
+
+              <p style={{ marginBottom: '12px', fontWeight: '600' }}>FREQUENTLY ASKED QUESTIONS</p>
+              <p style={{ marginBottom: '12px' }}><strong>Q: Can I bring guests?</strong><br/>A: Yes! Guests must be accompanied by you and sign a waiver.</p>
+              <p style={{ marginBottom: '12px' }}><strong>Q: When is the pool open?</strong><br/>A: Dawn to Dusk daily during season. Hours may vary seasonally.</p>
+              <p style={{ marginBottom: '12px' }}><strong>Q: Is there a swim team?</strong><br/>A: Yes! The Barracuda Swim Team practices 4-7:30pm. Pool is closed during practices.</p>
+              <p style={{ marginBottom: '12px' }}><strong>Q: Can I host a private event?</strong><br/>A: Yes! Party packages available. Contact management for details and pricing.</p>
+              <p style={{ marginBottom: '12px' }}><strong>Q: What if I lose my key fob?</strong><br/>A: Replacement fee is $15. Contact management for a new one.</p>
+              <p style={{ marginBottom: '12px' }}><strong>Q: Are refunds available?</strong><br/>A: Membership is non-refundable. You may transfer to another household member.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowMembershipRules(false)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#667eea',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontSize: '14px',
+              }}
+            >
+              Got It
+            </button>
+          </div>
+        </div>
+      )}
+
       <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 20px', position: 'relative', zIndex: 2 }}>
         <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden' }}>
           {/* Progress Bar */}
@@ -704,7 +760,17 @@ export default function Home() {
                       style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
                       required
                     />
-                    <span style={{ fontSize: '13px', color: '#374151' }}>I accept the Membership Rules & FAQ *</span>
+                    <div style={{ fontSize: '13px', color: '#374151' }}>
+                      I accept the{' '}
+                      <button
+                        type="button"
+                        onClick={() => setShowMembershipRules(true)}
+                        style={{ color: '#667eea', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontWeight: '600', fontSize: '13px' }}
+                      >
+                        Membership Rules & FAQ
+                      </button>
+                      {' '}*
+                    </div>
                   </label>
                   <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff' }}>
                     <input
