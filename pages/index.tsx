@@ -31,6 +31,17 @@ export default function Home() {
   const [numChildren, setNumChildren] = useState(0);
   const canvasRefs = {};
   
+  const getTodayDate = () => {
+    const today = new Date();
+    return {
+      month: String(today.getMonth() + 1),
+      day: String(today.getDate()),
+      year: String(today.getFullYear())
+    };
+  };
+
+  const today = getTodayDate();
+
   const [formData, setFormData] = useState({
     familyName: '',
     priorKeyfobNumber: '',
@@ -42,10 +53,10 @@ export default function Home() {
     emergencyContactPhone: '',
     adults: [{ name: '' }, { name: '' }, { name: '' }, { name: '' }],
     children: [
-      { name: '', month: '', day: '', year: '' },
-      { name: '', month: '', day: '', year: '' },
-      { name: '', month: '', day: '', year: '' },
-      { name: '', month: '', day: '', year: '' },
+      { name: '', month: today.month, day: today.day, year: today.year },
+      { name: '', month: today.month, day: today.day, year: today.year },
+      { name: '', month: today.month, day: today.day, year: today.year },
+      { name: '', month: today.month, day: today.day, year: today.year },
     ],
     additionalChildren: '',
     sitters: [{ name: '' }, { name: '' }],
@@ -57,17 +68,17 @@ export default function Home() {
     acceptPartyPolicy: false,
     acceptTerms: false,
     adultSignatures: [
-      { name: '', signMonth: '', signDay: '', signYear: '' },
-      { name: '', signMonth: '', signDay: '', signYear: '' },
-      { name: '', signMonth: '', signDay: '', signYear: '' },
-      { name: '', signMonth: '', signDay: '', signYear: '' },
+      { name: '', signMonth: today.month, signDay: today.day, signYear: today.year },
+      { name: '', signMonth: today.month, signDay: today.day, signYear: today.year },
+      { name: '', signMonth: today.month, signDay: today.day, signYear: today.year },
+      { name: '', signMonth: today.month, signDay: today.day, signYear: today.year },
     ],
     minorMemberNames: '',
     parentGuardianName: '',
     parentGuardianSignature: '',
-    minorSignMonth: '',
-    minorSignDay: '',
-    minorSignYear: '',
+    minorSignMonth: today.month,
+    minorSignDay: today.day,
+    minorSignYear: today.year,
     membershipLevel: 'family',
     paymentMethod: 'card',
     referral: false,
