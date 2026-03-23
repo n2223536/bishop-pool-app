@@ -109,17 +109,19 @@ export default function Home() {
     setTimeout(() => window.location.reload(), 2000);
   };
 
+  const bgStyle = {
+    minHeight: '100vh',
+    backgroundImage: `linear-gradient(135deg, rgba(0,102,204,0.7) 0%, rgba(0,204,255,0.7) 50%, rgba(102,255,204,0.7) 100%), url('/${poolImages[bgImageIndex]}')`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+    position: 'relative' as const,
+    overflow: 'hidden',
+    transition: 'background-image 0.8s ease-in-out'
+  };
+
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundImage: `linear-gradient(135deg, rgba(0,102,204,0.7) 0%, rgba(0,204,255,0.7) 50%, rgba(102,255,204,0.7) 100%), url('/${poolImages[bgImageIndex]}')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed',
-      position: 'relative', 
-      overflow: 'hidden',
-      transition: 'background-image 1s ease-in-out'
-    }}>
+    <div style={bgStyle}>
       {/* Background image carousel indicator */}
       <div style={{
         position: 'fixed',
