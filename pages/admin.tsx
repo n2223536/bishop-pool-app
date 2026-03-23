@@ -1,8 +1,20 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+interface Member {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  familySize: string;
+  membershipType: string;
+  signupDate: string;
+  paymentStatus: 'pending' | 'paid' | 'verified';
+}
+
 export default function Admin() {
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const [adminPassword, setAdminPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -20,7 +32,7 @@ export default function Admin() {
     setMembers(data);
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (adminPassword === 'bishop2024') {
       setIsAuthenticated(true);
@@ -36,7 +48,7 @@ export default function Admin() {
     localStorage.removeItem('adminAuth');
   };
 
-  const updatePaymentStatus = (id, status) => {
+  const updatePaymentStatus = (id: number, status: 'pending' | 'paid' | 'verified') => {
     const updated = members.map((m) =>
       m.id === id ? { ...m, paymentStatus: status } : m
     );
@@ -44,7 +56,7 @@ export default function Admin() {
     localStorage.setItem('members', JSON.stringify(updated));
   };
 
-  const deleteMember = (id) => {
+  const deleteMember = (id: number) => {
     if (confirm('Delete this member?')) {
       const updated = members.filter((m) => m.id !== id);
       setMembers(updated);
