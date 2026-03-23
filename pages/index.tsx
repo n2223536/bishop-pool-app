@@ -797,6 +797,11 @@ export default function Home() {
                   <div style={{ fontSize: '28px', marginRight: '12px' }}>📜</div>
                   <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Policies</h3>
                 </div>
+                <div style={{ padding: '16px', background: '#fef3f2', border: '2px solid #fca5a5', borderRadius: '8px', marginBottom: '16px' }}>
+                  <p style={{ color: '#991b1b', fontSize: '14px', fontWeight: '600', margin: 0 }}>
+                    ⚠️ You must read each policy before accepting
+                  </p>
+                </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff' }}>
                     <input
