@@ -165,12 +165,43 @@ export default function Home() {
         pointerEvents: 'none',
         zIndex: 0
       }}/>
+      {/* Photo Carousel Hero */}
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        height: '400px',
+        backgroundImage: `url('/${poolImages[bgImageIndex]}')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        transition: 'background-image 0.8s ease-in-out',
+        zIndex: 2,
+        boxShadow: 'inset 0 0 60px rgba(0,0,0,0.3)'
+      }}>
+        {/* Overlay text */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: 'white',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '64px', marginBottom: '16px' }}>🏊‍♂️</div>
+          <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '12px', textShadow: '2px 2px 8px rgba(0,0,0,0.5)' }}>Bishop Estates Cabana Club</h1>
+          <p style={{ fontSize: '20px', textShadow: '1px 1px 4px rgba(0,0,0,0.5)' }}>Join the Barracudas Family! 🐠</p>
+        </div>
+      </div>
+
       {/* Header with Hero */}
-      <header style={{ background: 'linear-gradient(135deg, rgba(0, 102, 204, 0.95) 0%, rgba(0, 204, 255, 0.95) 100%)', color: 'white', padding: '60px 20px', textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', position: 'relative', zIndex: 2 }}>
+      <header style={{ background: 'linear-gradient(135deg, rgba(0, 102, 204, 0.95) 0%, rgba(0, 204, 255, 0.95) 100%)', color: 'white', padding: '40px 20px', textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', position: 'relative', zIndex: 2 }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{ fontSize: '72px', marginBottom: '16px' }}>🏊‍♂️</div>
-          <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '12px' }}>Bishop Estates Cabana Club</h1>
-          <p style={{ fontSize: '20px', color: '#e0e7ff', marginBottom: '8px' }}>Join the Barracudas Family! 🐠</p>
           <p style={{ fontSize: '14px', color: '#c7d2fe' }}>Where memories are made, one splash at a time</p>
         </div>
       </header>
