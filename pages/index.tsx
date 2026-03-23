@@ -208,9 +208,14 @@ export default function Home() {
       </div>
 
       {/* Header with Hero */}
-      <header style={{ background: 'linear-gradient(135deg, rgba(0, 102, 204, 0.95) 0%, rgba(0, 204, 255, 0.95) 100%)', color: 'white', padding: '40px 20px', textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', position: 'relative', zIndex: 2 }}>
+      <header style={{ background: 'linear-gradient(135deg, rgba(0, 102, 204, 0.95) 0%, rgba(0, 204, 255, 0.95) 100%)', color: 'white', padding: '60px 20px', textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', position: 'relative', zIndex: 2 }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <p style={{ fontSize: '14px', color: '#c7d2fe' }}>Where memories are made, one splash at a time</p>
+          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#fff', marginBottom: '12px', textShadow: '2px 2px 8px rgba(0,0,0,0.3)', letterSpacing: '0.5px' }}>
+            ✨ Where Memories Are Made ✨
+          </p>
+          <p style={{ fontSize: '18px', color: '#e0e7ff', fontStyle: 'italic' }}>
+            One splash at a time 💦
+          </p>
         </div>
       </header>
 
@@ -565,7 +570,7 @@ export default function Home() {
                 {numChildren > 0 && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {Array.from({ length: numChildren }).map((_, index) => (
-                      <div key={index} style={{ padding: '16px', background: 'linear-gradient(135deg, #fef3f2 0%, #fef5f1 100%)', border: '2px solid #fee2e2', borderRadius: '8px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '12px', alignItems: 'end' }}>
+                      <div key={index} style={{ padding: '16px', background: 'linear-gradient(135deg, #fef3f2 0%, #fef5f1 100%)', border: '2px solid #fee2e2', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <input
                           type="text"
                           placeholder={`Child #${index + 1} Name *`}
