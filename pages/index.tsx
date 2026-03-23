@@ -170,14 +170,22 @@ export default function Home() {
         position: 'relative',
         width: '100%',
         height: '400px',
-        backgroundImage: `url('/${poolImages[bgImageIndex]}')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        transition: 'background-image 0.8s ease-in-out',
         zIndex: 2,
-        boxShadow: 'inset 0 0 60px rgba(0,0,0,0.3)'
+        overflow: 'hidden',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
       }}>
+        <img 
+          src={`/${poolImages[bgImageIndex]}`}
+          alt="Bishop Estates Pool"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            transition: 'opacity 0.8s ease-in-out',
+            display: 'block'
+          }}
+        />
         {/* Overlay text */}
         <div style={{
           position: 'absolute',
