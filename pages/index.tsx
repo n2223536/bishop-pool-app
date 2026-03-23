@@ -896,7 +896,7 @@ export default function Home() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   {Array.from({ length: numAdults }).map((_, index) => (
-                    <div key={index} style={{ padding: '20px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff' }}>
+                    <div key={index} style={{ padding: '20px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff', margin: '0 auto', maxWidth: '600px', width: '100%' }}>
                       <p style={{ fontSize: '14px', fontWeight: '600', color: '#667eea', marginBottom: '16px' }}>Member #{index + 1}</p>
                       
                       <div style={{ marginBottom: '16px' }}>
@@ -922,19 +922,23 @@ export default function Home() {
                               const canvas = canvasRefs[`sig-${index}`];
                               const ctx = canvas.getContext('2d');
                               const rect = canvas.getBoundingClientRect();
+                              const scaleX = canvas.width / rect.width;
+                              const scaleY = canvas.height / rect.height;
                               ctx.beginPath();
-                              ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+                              ctx.moveTo((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
                             }}
                             onMouseMove={(e) => {
                               if (e.buttons === 1) {
                                 const canvas = canvasRefs[`sig-${index}`];
                                 const ctx = canvas.getContext('2d');
                                 const rect = canvas.getBoundingClientRect();
+                                const scaleX = canvas.width / rect.width;
+                                const scaleY = canvas.height / rect.height;
                                 ctx.lineWidth = 2.5;
                                 ctx.lineCap = 'round';
                                 ctx.lineJoin = 'round';
                                 ctx.strokeStyle = '#667eea';
-                                ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+                                ctx.lineTo((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
                                 ctx.stroke();
                               }
                             }}
@@ -943,8 +947,10 @@ export default function Home() {
                               const ctx = canvas.getContext('2d');
                               const rect = canvas.getBoundingClientRect();
                               const touch = e.touches[0];
+                              const scaleX = canvas.width / rect.width;
+                              const scaleY = canvas.height / rect.height;
                               ctx.beginPath();
-                              ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                              ctx.moveTo((touch.clientX - rect.left) * scaleX, (touch.clientY - rect.top) * scaleY);
                             }}
                             onTouchMove={(e) => {
                               e.preventDefault();
@@ -952,11 +958,13 @@ export default function Home() {
                               const ctx = canvas.getContext('2d');
                               const rect = canvas.getBoundingClientRect();
                               const touch = e.touches[0];
+                              const scaleX = canvas.width / rect.width;
+                              const scaleY = canvas.height / rect.height;
                               ctx.lineWidth = 2.5;
                               ctx.lineCap = 'round';
                               ctx.lineJoin = 'round';
                               ctx.strokeStyle = '#667eea';
-                              ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                              ctx.lineTo((touch.clientX - rect.left) * scaleX, (touch.clientY - rect.top) * scaleY);
                               ctx.stroke();
                             }}
                             style={{ display: 'block', width: '100%', height: 'auto', touchAction: 'none' }}
