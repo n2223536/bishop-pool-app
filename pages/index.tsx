@@ -473,8 +473,8 @@ export default function Home() {
         </div>
       )}
 
-      <main style={{ width: '100%', maxWidth: '1100px', margin: '0 auto', padding: '20px', position: 'relative', zIndex: 2, boxSizing: 'border-box' }}>
-        <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden', width: '100%' }}>
+      <main style={{ position: 'relative', zIndex: 2, margin: '0', padding: '0', width: '100vw', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden', width: '100%', maxWidth: '1100px', margin: '20px', boxSizing: 'border-box' }}>
           {/* Progress Bar */}
           <div style={{ height: '4px', background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)' }} />
 
