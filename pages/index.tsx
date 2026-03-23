@@ -69,6 +69,7 @@ export default function Home() {
     membershipLevel: 'family',
     paymentMethod: 'card',
     referral: false,
+    referralFamilyName: '',
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -1113,9 +1114,19 @@ export default function Home() {
                     onChange={handleCheckboxChange}
                     style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
                   />
-                  <div>
+                  <div style={{ width: '100%' }}>
                     <p style={{ color: '#1f2937', fontWeight: '600', fontSize: '14px', margin: 0 }}>🎉 I'm referring a new family</p>
                     <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '4px', margin: 0 }}>Get $100 credit (credited to Venmo once both pay)</p>
+                    {formData.referral && (
+                      <input
+                        type="text"
+                        placeholder="Name of family you're referring *"
+                        value={formData.referralFamilyName}
+                        onChange={(e) => setFormData({ ...formData, referralFamilyName: e.target.value })}
+                        style={{ marginTop: '12px', padding: '12px', border: '2px solid #667eea', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%', boxSizing: 'border-box' }}
+                        required={formData.referral}
+                      />
+                    )}
                   </div>
                 </label>
               </section>
