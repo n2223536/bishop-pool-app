@@ -88,3 +88,4 @@ Once you sign up, data is saved to browser localStorage. You can check it in:
 ## Questions?
 
 Contact the dev team for questions or feature requests.
+# bishop-pool-app
