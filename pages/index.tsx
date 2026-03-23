@@ -938,6 +938,27 @@ export default function Home() {
                                 ctx.stroke();
                               }
                             }}
+                            onTouchStart={(e) => {
+                              const canvas = canvasRefs[`sig-${index}`];
+                              const ctx = canvas.getContext('2d');
+                              const rect = canvas.getBoundingClientRect();
+                              const touch = e.touches[0];
+                              ctx.beginPath();
+                              ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                            }}
+                            onTouchMove={(e) => {
+                              e.preventDefault();
+                              const canvas = canvasRefs[`sig-${index}`];
+                              const ctx = canvas.getContext('2d');
+                              const rect = canvas.getBoundingClientRect();
+                              const touch = e.touches[0];
+                              ctx.lineWidth = 2.5;
+                              ctx.lineCap = 'round';
+                              ctx.lineJoin = 'round';
+                              ctx.strokeStyle = '#667eea';
+                              ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                              ctx.stroke();
+                            }}
                             style={{ display: 'block', width: '100%', height: 'auto', touchAction: 'none' }}
                           />
                         </div>
