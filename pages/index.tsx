@@ -1,7 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function Home() {
+  const [bgImageIndex, setBgImageIndex] = useState(0);
+  const poolImages = ['pool-family.jpg', 'pool-splash.jpg', 'pool-people.jpg', 'pool-outside.jpg'];
+  
+  // Rotate background image every 8 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBgImageIndex((prev) => (prev + 1) % poolImages.length);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
   const [showTerms, setShowTerms] = useState(false);
   const [hasReadTerms, setHasReadTerms] = useState(false);
   const [showGuestPolicy, setShowGuestPolicy] = useState(false);
@@ -99,7 +110,35 @@ export default function Home() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0066cc 0%, #00ccff 50%, #66ffcc 100%)', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ 
+      minHeight: '100vh', 
+      background: `linear-gradient(135deg, rgba(0,102,204,0.7) 0%, rgba(0,204,255,0.7) 50%, rgba(102,255,204,0.7) 100%), url('//${poolImages[bgImageIndex]}')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
+      position: 'relative', 
+      overflow: 'hidden',
+      transition: 'background 1s ease-in-out'
+    }}>
+      {/* Background image carousel indicator */}
+      <div style={{
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        display: 'flex',
+        gap: '8px',
+        zIndex: 10
+      }}>
+        {poolImages.map((_, idx) => (
+          <div key={idx} style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            backgroundColor: idx === bgImageIndex ? '#fff' : 'rgba(255,255,255,0.4)',
+            transition: 'all 0.3s ease'
+          }} />
+        ))}
+      </div>
       {/* Water wave decorations */}
       <div style={{
         position: 'absolute',
