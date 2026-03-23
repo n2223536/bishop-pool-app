@@ -1,0 +1,84 @@
+<!-- 
+  PWA Head Template for Bishop Estates Cabana Club
+  Add these meta tags to your _document.tsx or _app.tsx <Head>
+-->
+
+<!-- Web App Manifest -->
+<link rel="manifest" href="/manifest.json" />
+
+<!-- Viewport for mobile responsiveness -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<!-- Theme colors -->
+<meta name="theme-color" content="#1e40af" />
+
+<!-- iPhone/iPad specific -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Cabana Club" />
+
+<!-- Apple icons for home screen -->
+<link rel="apple-touch-icon" href="/icons/icon-180x180-apple.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<!-- iPhone Splash Screens (for older iOS versions) -->
+<!-- iPhone 6 Plus (414x736) -->
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="/splash/apple-splash-1242-2208.png" />
+<!-- iPhone 6 (375x667) -->
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/splash/apple-splash-750-1334.png" />
+<!-- iPhone 12 Pro (390x844) -->
+<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/splash/apple-splash-1170-2532.png" />
+<!-- iPhone 12 (375x812) -->
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="/splash/apple-splash-1125-2436.png" />
+<!-- iPad Air 4 (768x1024) -->
+<link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="/splash/apple-splash-1536-2048.png" />
+
+<!-- General meta tags -->
+<meta name="description" content="Your gateway to Bishop Estates Cabana Club — membership, events, amenities, and community" />
+<meta name="keywords" content="cabana club, pool, community, recreation, membership" />
+<meta name="author" content="Bishop Estates Cabana Club" />
+
+<!-- Social/Open Graph tags -->
+<meta property="og:title" content="Bishop Estates Cabana Club" />
+<meta property="og:description" content="Your gateway to Bishop Estates Cabana Club — membership, events, amenities, and community" />
+<meta property="og:image" content="/icons/icon-512x512.png" />
+<meta property="og:url" content="https://cabanaclub.example.com" />
+<meta property="og:type" content="website" />
+
+<!-- PWA Install Prompt Handling (optional) -->
+<script>
+  // Detect if app is already installed
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window.deferredPrompt = e;
+    // Show install button if desired
+    const installBtn = document.getElementById('install-btn');
+    if (installBtn) {
+      installBtn.style.display = 'block';
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    console.log('⚡ App installed!');
+    window.deferredPrompt = null;
+  });
+</script>
+
+<!-- Service Worker Registration (optional - next-pwa handles this) -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then((reg) => {
+          console.log('✓ Service Worker registered:', reg);
+        })
+        .catch((err) => {
+          console.log('✗ Service Worker registration failed:', err);
+        });
+    });
+  }
+</script>

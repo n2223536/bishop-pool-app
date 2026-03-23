@@ -1,0 +1,215 @@
+/**
+ * PWA Install Prompt Styles
+ * Responsive styles for iOS and Android install prompts
+ */
+
+/* Base prompt styles */
+.pwa-prompt {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  color: white;
+  padding: 16px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Prompt content */
+.pwa-prompt-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.pwa-prompt h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.pwa-prompt p {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  opacity: 0.95;
+  line-height: 1.5;
+}
+
+/* iOS specific styles */
+.pwa-prompt.ios-prompt {
+  padding: 20px 16px;
+}
+
+.install-steps {
+  margin: 0 0 16px 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.install-steps li {
+  margin-bottom: 8px;
+}
+
+.install-steps strong {
+  font-weight: 600;
+  color: #fbbf24;
+}
+
+/* Button styles */
+.button-group {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.install-btn,
+.dismiss-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.install-btn {
+  background-color: #fbbf24;
+  color: #1e40af;
+}
+
+.install-btn:hover {
+  background-color: #f59e0b;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.install-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dismiss-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.dismiss-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.dismiss-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .pwa-prompt {
+    padding: 16px 12px;
+  }
+
+  .pwa-prompt h3 {
+    font-size: 16px;
+  }
+
+  .pwa-prompt p {
+    font-size: 13px;
+  }
+
+  .button-group {
+    flex-direction: column-reverse;
+  }
+
+  .install-btn,
+  .dismiss-btn {
+    width: 100%;
+    padding: 12px 16px;
+  }
+
+  .install-steps {
+    font-size: 13px;
+  }
+}
+
+/* Tablet/Desktop */
+@media (min-width: 768px) {
+  .pwa-prompt {
+    max-width: 90%;
+    margin: 0 auto 20px;
+    border-radius: 12px;
+    bottom: auto;
+  }
+
+  .pwa-prompt h3 {
+    font-size: 20px;
+  }
+
+  .pwa-prompt p {
+    font-size: 15px;
+  }
+
+  .install-btn,
+  .dismiss-btn {
+    padding: 12px 20px;
+    font-size: 15px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .pwa-prompt {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  }
+}
+
+/* Accessibility */
+.install-btn:focus,
+.dismiss-btn:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pwa-prompt,
+  .install-btn,
+  .dismiss-btn {
+    animation: none;
+    transition: none;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: none;
+      opacity: 1;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+}
+
+/* Standalone app mode (when installed) */
+@media (display-mode: standalone) {
+  .pwa-prompt {
+    display: none;
+  }
+}
