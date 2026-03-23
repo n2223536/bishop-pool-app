@@ -5,6 +5,13 @@ export default function Home() {
   const [bgImageIndex, setBgImageIndex] = useState(0);
   const poolImages = ['pool-bishop-estates.jpg', 'pool-family.jpg', 'pool-splash.jpg', 'pool-people.jpg', 'pool-outside.jpg'];
   
+  // Responsive styles to prevent overflow on mobile
+  const responsiveGridStyle = (cols: number) => ({
+    display: 'grid' as const,
+    gridTemplateColumns: cols === 2 ? 'repeat(auto-fit, minmax(200px, 1fr))' : 'repeat(auto-fit, minmax(150px, 1fr))',
+    gap: '16px'
+  });
+  
   // Rotate background image every 8 seconds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -415,7 +422,7 @@ export default function Home() {
                   <div style={{ fontSize: '28px', marginRight: '12px' }}>📋</div>
                   <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Contact Information</h3>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div style={responsiveGridStyle(2)}>
                   <input
                     type="text"
                     name="familyName"
@@ -909,7 +916,7 @@ export default function Home() {
                     onChange={handleInputChange}
                     style={{ padding: '12px', border: '2px solid #f9a8d4', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', minHeight: '60px', width: '100%', marginBottom: '12px', background: '#fdf0f6' }}
                   />
-                  <div style={{ padding: '16px', border: '2px solid #f9a8d4', borderRadius: '8px', background: '#fdf0f6', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                  <div style={{ padding: '16px', border: '2px solid #f9a8d4', borderRadius: '8px', background: '#fdf0f6', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                     <input
                       type="text"
                       name="parentGuardianName"
@@ -1048,7 +1055,7 @@ export default function Home() {
               </section>
 
               {/* Submit */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '16px', alignItems: 'end' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ padding: '20px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '8px', color: 'white' }}>
                   <p style={{ fontSize: '12px', margin: '0 0 8px 0' }}>Total Due:</p>
                   <p style={{ fontSize: '28px', fontWeight: 'bold', margin: 0 }}>
