@@ -99,9 +99,33 @@ export default function Home() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0066cc 0%, #00ccff 50%, #66ffcc 100%)', position: 'relative', overflow: 'hidden' }}>
+      {/* Water wave decorations */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 120%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0,40 Q300,0 600,40 T1200,40 L1200,120 L0,120 Z%22 fill=%22rgba(255,255,255,0.08)%22/%3E%3Cpath d=%22M0,60 Q300,20 600,60 T1200,60 L1200,120 L0,120 Z%22 fill=%22rgba(255,255,255,0.05)%22/%3E%3C/svg%3E")',
+        backgroundRepeat: 'repeat-x',
+        backgroundPosition: '0 0, 0 20px',
+        backgroundSize: '600px 80px',
+        pointerEvents: 'none',
+        zIndex: 1
+      }}/>
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundImage: 'radial-gradient(circle at 15% 30%, rgba(255,255,255,0.2) 0%, transparent 40%), radial-gradient(circle at 85% 70%, rgba(255,255,255,0.15) 0%, transparent 35%)',
+        pointerEvents: 'none',
+        zIndex: 0
+      }}/>
       {/* Header with Hero */}
-      <header style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '60px 20px', textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.2)' }}>
+      <header style={{ background: 'linear-gradient(135deg, rgba(0, 102, 204, 0.95) 0%, rgba(0, 204, 255, 0.95) 100%)', color: 'white', padding: '60px 20px', textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', position: 'relative', zIndex: 2 }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ fontSize: '72px', marginBottom: '16px' }}>🏊‍♂️</div>
           <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '12px' }}>Bishop Estates Cabana Club</h1>
@@ -287,7 +311,7 @@ export default function Home() {
         </div>
       )}
 
-      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 20px' }}>
+      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 20px', position: 'relative', zIndex: 2 }}>
         <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden' }}>
           {/* Progress Bar */}
           <div style={{ height: '4px', background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)' }} />
