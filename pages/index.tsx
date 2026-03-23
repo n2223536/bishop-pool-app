@@ -783,7 +783,51 @@ export default function Home() {
                 )}
               </section>
 
-              {/* Policies */}
+              {/* Gate Access */}
+              <section>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '28px', marginRight: '12px' }}>🔑</div>
+                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Gate Access</h3>
+                </div>
+                <div style={{ marginBottom: '16px' }}>
+                  <input
+                    type="text"
+                    name="priorKeyfobNumber"
+                    placeholder="Prior Member Key Fob # (optional)"
+                    value={formData.priorKeyfobNumber}
+                    onChange={handleInputChange}
+                    style={{ padding: '12px', border: '2px solid #fee2e2', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', width: '100%', boxSizing: 'border-box', background: '#fef3f2' }}
+                  />
+                </div>
+                <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '16px', border: '2px solid #fee2e2', borderRadius: '8px', background: '#fef3f2', marginBottom: '12px' }}>
+                  <input
+                    type="checkbox"
+                    name="needsKeyfob"
+                    checked={formData.needsKeyfob}
+                    onChange={handleCheckboxChange}
+                    style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
+                  />
+                  <div>
+                    <p style={{ color: '#1f2937', fontWeight: '600', fontSize: '14px', margin: 0 }}>I need a NEW keyfob (+$15)</p>
+                    <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '4px', margin: 0 }}>New members or lost keyfob</p>
+                  </div>
+                </label>
+                {formData.needsKeyfob && (
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #fee2e2', borderRadius: '8px', background: '#fef3f2' }}>
+                    <input
+                      type="checkbox"
+                      name="acceptKeyfobFee"
+                      checked={formData.acceptKeyfobFee}
+                      onChange={handleCheckboxChange}
+                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
+                      required
+                    />
+                    <span style={{ fontSize: '13px', color: '#374151' }}>I agree to the $15 keyfob replacement fee *</span>
+                  </label>
+                )}
+              </section>
+
+              {/* Policies & Legal Agreement */}
               <section>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                   <div style={{ fontSize: '28px', marginRight: '12px' }}>📜</div>
@@ -863,52 +907,9 @@ export default function Home() {
               </section>
 
               {/* Keyfob */}
-              <section>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '28px', marginRight: '12px' }}>🔑</div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Gate Access</h3>
-                </div>
-                <div style={{ marginBottom: '16px' }}>
-                  <input
-                    type="text"
-                    name="priorKeyfobNumber"
-                    placeholder="Prior Member Key Fob # (optional)"
-                    value={formData.priorKeyfobNumber}
-                    onChange={handleInputChange}
-                    style={{ padding: '12px', border: '2px solid #fee2e2', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', width: '100%', boxSizing: 'border-box', background: '#fef3f2' }}
-                  />
-                </div>
-                <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '16px', border: '2px solid #fee2e2', borderRadius: '8px', background: '#fef3f2', marginBottom: '12px' }}>
-                  <input
-                    type="checkbox"
-                    name="needsKeyfob"
-                    checked={formData.needsKeyfob}
-                    onChange={handleCheckboxChange}
-                    style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
-                  />
-                  <div>
-                    <p style={{ color: '#1f2937', fontWeight: '600', fontSize: '14px', margin: 0 }}>I need a NEW keyfob (+$15)</p>
-                    <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '4px', margin: 0 }}>New members or lost keyfob</p>
-                  </div>
-                </label>
-                {formData.needsKeyfob && (
-                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #fee2e2', borderRadius: '8px', background: '#fef3f2' }}>
-                    <input
-                      type="checkbox"
-                      name="acceptKeyfobFee"
-                      checked={formData.acceptKeyfobFee}
-                      onChange={handleCheckboxChange}
-                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
-                      required
-                    />
-                    <span style={{ fontSize: '13px', color: '#374151' }}>I agree to the $15 keyfob replacement fee *</span>
-                  </label>
-                )}
-              </section>
-
-              {/* Waiver */}
-              <section>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+              {/* Legal Agreement */}
+              <div style={{ marginTop: '32px', padding: '32px', background: 'linear-gradient(135deg, #f0f4ff 0%, #f5f1ff 100%)', borderRadius: '12px', border: '2px solid #dbeafe' }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
                   <div style={{ fontSize: '28px', marginRight: '12px' }}>✍️</div>
                   <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Legal Agreement</h3>
                 </div>
@@ -942,7 +943,7 @@ export default function Home() {
                     </button>
                   </div>
                 </label>
-              </section>
+              </div>
 
               {/* Adult Signatures */}
               <section>
