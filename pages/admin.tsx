@@ -190,7 +190,7 @@ export default function Admin() {
                   <td style={{ padding: '16px' }}>
                     <select
                       value={member.paymentStatus}
-                      onChange={(e) => updatePaymentStatus(member.id, e.target.value)}
+                      onChange={(e) => updatePaymentStatus(member.id, e.target.value as 'pending' | 'paid' | 'verified')}
                       style={{ padding: '6px 12px', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '14px' }}
                     >
                       <option value="pending">⏳ Pending</option>
