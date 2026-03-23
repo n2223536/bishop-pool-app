@@ -837,12 +837,12 @@ export default function Home() {
                         />
                       </div>
 
-                      <div style={{ marginBottom: '16px' }}>
+                      <div style={{ marginBottom: '16px', width: '100%' }}>
                         <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Draw Signature Below *</label>
-                        <div style={{ border: '2px solid #dbeafe', borderRadius: '6px', background: 'white', cursor: 'crosshair', overflow: 'hidden' }}>
+                        <div style={{ border: '2px solid #dbeafe', borderRadius: '6px', background: 'white', cursor: 'crosshair', overflow: 'hidden', width: '100%', maxWidth: '600px', margin: '0 auto' }}>
                           <canvas
                             ref={(el) => { if (el) canvasRefs[`sig-${index}`] = el; }}
-                            width={400}
+                            width={600}
                             height={120}
                             onMouseDown={(e) => {
                               const canvas = canvasRefs[`sig-${index}`];
@@ -1058,6 +1058,7 @@ export default function Home() {
                 <button
                   type="submit"
                   style={{
+                    width: '100%',
                     padding: '16px 48px',
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     color: 'white',
