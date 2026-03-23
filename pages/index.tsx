@@ -901,8 +901,9 @@ export default function Home() {
                             alt="Venmo QR" 
                             style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '4px' }}
                             onError={(e) => {
-                              e.target.style.display = 'none';
-                              if (e.target.parentElement) e.target.parentElement.innerHTML = '<p style="color: #9ca3af; font-size: 11px;">Add venmo-qr.png to /public/</p>';
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              if (target.parentElement) target.parentElement.innerHTML = '<p style="color: #9ca3af; font-size: 11px;">Add venmo-qr.png to /public/</p>';
                             }}
                           />
                         </div>
