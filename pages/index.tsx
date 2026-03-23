@@ -913,11 +913,11 @@ export default function Home() {
 
                       <div style={{ marginBottom: '16px', width: '100%' }}>
                         <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Draw Signature Below *</label>
-                        <div style={{ border: '2px solid #dbeafe', borderRadius: '6px', background: 'white', cursor: 'crosshair', overflow: 'hidden', width: '100%', maxWidth: '600px', margin: '0 auto' }}>
+                        <div style={{ border: '2px solid #dbeafe', borderRadius: '6px', background: 'white', cursor: 'crosshair', overflow: 'hidden', width: '100%' }}>
                           <canvas
                             ref={(el) => { if (el) canvasRefs[`sig-${index}`] = el; }}
-                            width={600}
-                            height={120}
+                            width={800}
+                            height={150}
                             onMouseDown={(e) => {
                               const canvas = canvasRefs[`sig-${index}`];
                               const ctx = canvas.getContext('2d');
@@ -938,7 +938,7 @@ export default function Home() {
                                 ctx.stroke();
                               }
                             }}
-                            style={{ display: 'block', width: '100%', touchAction: 'none' }}
+                            style={{ display: 'block', width: '100%', height: 'auto', touchAction: 'none' }}
                           />
                         </div>
                         <button
@@ -960,7 +960,7 @@ export default function Home() {
                           placeholder="MM-DD-YYYY"
                           value={formData.adultSignatures[index]?.date || ''}
                           onChange={(e) => handleNestedChange('adultSignatures', index, 'date', e.target.value)}
-                          style={{ padding: '12px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px' }}
+                          style={{ padding: '12px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
                           required
                         />
                       </div>
