@@ -57,15 +57,17 @@ export default function Home() {
     acceptPartyPolicy: false,
     acceptTerms: false,
     adultSignatures: [
-      { name: '', date: '' },
-      { name: '', date: '' },
-      { name: '', date: '' },
-      { name: '', date: '' },
+      { name: '', signMonth: '', signDay: '', signYear: '' },
+      { name: '', signMonth: '', signDay: '', signYear: '' },
+      { name: '', signMonth: '', signDay: '', signYear: '' },
+      { name: '', signMonth: '', signDay: '', signYear: '' },
     ],
     minorMemberNames: '',
     parentGuardianName: '',
     parentGuardianSignature: '',
-    minorSignatureDate: '',
+    minorSignMonth: '',
+    minorSignDay: '',
+    minorSignYear: '',
     membershipLevel: 'family',
     paymentMethod: 'card',
     referral: false,
@@ -460,12 +462,12 @@ export default function Home() {
         </div>
       )}
 
-      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 20px', position: 'relative', zIndex: 2 }}>
+      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 20px', position: 'relative', zIndex: 2, width: '100%', boxSizing: 'border-box' }}>
         <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden' }}>
           {/* Progress Bar */}
           <div style={{ height: '4px', background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)' }} />
 
-          <div style={{ padding: '48px' }}>
+          <div style={{ padding: '24px 20px' }}>
             {submitted && (
               <div style={{ marginBottom: '24px', padding: '20px', background: 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)', border: '2px solid #4ade80', borderRadius: '12px', color: '#166534', fontWeight: '600', fontSize: '16px', textAlign: 'center' }}>
                 ✅ Registration submitted! Check your email for confirmation.
@@ -894,9 +896,9 @@ export default function Home() {
                   <div style={{ fontSize: '28px', marginRight: '12px' }}>👤</div>
                   <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Signatures</h3>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center', width: '100%' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center', width: '100%', paddingLeft: 0, paddingRight: 0 }}>
                   {Array.from({ length: numAdults }).map((_, index) => (
-                    <div key={index} style={{ padding: '20px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff', maxWidth: '600px', width: '100%' }}>
+                    <div key={index} style={{ padding: '20px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff', maxWidth: '600px', width: '100%', boxSizing: 'border-box', margin: '0 auto' }}>
                       <p style={{ fontSize: '14px', fontWeight: '600', color: '#667eea', marginBottom: '16px' }}>Member #{index + 1}</p>
                       
                       <div style={{ marginBottom: '16px' }}>
@@ -982,16 +984,55 @@ export default function Home() {
                         </button>
                       </div>
 
-                      <div>
-                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Date Signed (MM-DD-YYYY) *</label>
-                        <input
-                          type="text"
-                          placeholder="MM-DD-YYYY"
-                          value={formData.adultSignatures[index]?.date || ''}
-                          onChange={(e) => handleNestedChange('adultSignatures', index, 'date', e.target.value)}
-                          style={{ padding: '12px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
-                          required
-                        />
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                        <div>
+                          <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Month *</label>
+                          <select
+                            value={formData.adultSignatures[index]?.signMonth || ''}
+                            onChange={(e) => handleNestedChange('adultSignatures', index, 'signMonth', e.target.value)}
+                            style={{ padding: '10px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
+                            required
+                          >
+                            <option value="">Month</option>
+                            {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                              <option key={m} value={m}>
+                                {new Date(2000, m - 1).toLocaleDateString('en-US', { month: 'short' })}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Day *</label>
+                          <select
+                            value={formData.adultSignatures[index]?.signDay || ''}
+                            onChange={(e) => handleNestedChange('adultSignatures', index, 'signDay', e.target.value)}
+                            style={{ padding: '10px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
+                            required
+                          >
+                            <option value="">Day</option>
+                            {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                              <option key={d} value={d}>
+                                {d}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Year *</label>
+                          <select
+                            value={formData.adultSignatures[index]?.signYear || ''}
+                            onChange={(e) => handleNestedChange('adultSignatures', index, 'signYear', e.target.value)}
+                            style={{ padding: '10px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
+                            required
+                          >
+                            <option value="">Year</option>
+                            {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                              <option key={y} value={y}>
+                                {y}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -1028,16 +1069,55 @@ export default function Home() {
                       placeholder="Parent/Guardian Signature"
                       value={formData.parentGuardianSignature}
                       onChange={handleInputChange}
-                      style={{ padding: '10px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px' }}
+                      style={{ padding: '10px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
                     />
-                    <input
-                      type="text"
-                      name="minorSignatureDate"
-                      placeholder="Date (MM-DD-YYYY)"
-                      value={formData.minorSignatureDate}
-                      onChange={handleInputChange}
-                      style={{ padding: '10px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '2 / -1' }}
-                    />
+                    <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Month</label>
+                        <select
+                          value={formData.minorSignMonth || ''}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, minorSignMonth: e.target.value }))}
+                          style={{ padding: '8px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
+                        >
+                          <option value="">Month</option>
+                          {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                            <option key={m} value={m}>
+                              {new Date(2000, m - 1).toLocaleDateString('en-US', { month: 'short' })}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Day</label>
+                        <select
+                          value={formData.minorSignDay || ''}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, minorSignDay: e.target.value }))}
+                          style={{ padding: '8px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
+                        >
+                          <option value="">Day</option>
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                            <option key={d} value={d}>
+                              {d}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Year</label>
+                        <select
+                          value={formData.minorSignYear || ''}
+                          onChange={(e) => setFormData((prev) => ({ ...prev, minorSignYear: e.target.value }))}
+                          style={{ padding: '8px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
+                        >
+                          <option value="">Year</option>
+                          {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                            <option key={y} value={y}>
+                              {y}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 </section>
               )}
