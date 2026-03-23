@@ -112,13 +112,13 @@ export default function Home() {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      background: `linear-gradient(135deg, rgba(0,102,204,0.7) 0%, rgba(0,204,255,0.7) 50%, rgba(102,255,204,0.7) 100%), url('//${poolImages[bgImageIndex]}')`,
+      backgroundImage: `linear-gradient(135deg, rgba(0,102,204,0.7) 0%, rgba(0,204,255,0.7) 50%, rgba(102,255,204,0.7) 100%), url('/${poolImages[bgImageIndex]}')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
       position: 'relative', 
       overflow: 'hidden',
-      transition: 'background 1s ease-in-out'
+      transition: 'background-image 1s ease-in-out'
     }}>
       {/* Background image carousel indicator */}
       <div style={{
