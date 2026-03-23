@@ -536,14 +536,6 @@ export default function Home() {
                   />
                   <input
                     type="text"
-                    name="priorKeyfobNumber"
-                    placeholder="Prior Member Key Fob # (optional)"
-                    value={formData.priorKeyfobNumber}
-                    onChange={handleInputChange}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
-                  />
-                  <input
-                    type="text"
                     placeholder="Street Address *"
                     value={formData.address.street}
                     onChange={(e) => handleAddressChange('street', e.target.value)}
@@ -875,6 +867,16 @@ export default function Home() {
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                   <div style={{ fontSize: '28px', marginRight: '12px' }}>🔑</div>
                   <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Gate Access</h3>
+                </div>
+                <div style={{ marginBottom: '16px' }}>
+                  <input
+                    type="text"
+                    name="priorKeyfobNumber"
+                    placeholder="Prior Member Key Fob # (optional)"
+                    value={formData.priorKeyfobNumber}
+                    onChange={handleInputChange}
+                    style={{ padding: '12px', border: '2px solid #fee2e2', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', width: '100%', boxSizing: 'border-box', background: '#fef3f2' }}
+                  />
                 </div>
                 <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '16px', border: '2px solid #fee2e2', borderRadius: '8px', background: '#fef3f2', marginBottom: '12px' }}>
                   <input
