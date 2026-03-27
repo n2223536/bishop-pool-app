@@ -23,12 +23,6 @@ interface AppData {
     title: string;
     content: string;
   }>;
-  updatesList?: Array<{
-    id: string;
-    date: string;
-    title: string;
-    content: string;
-  }>;
   calendar: {
     enabled: boolean;
     googleCalendarId: string;
