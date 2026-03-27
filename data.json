@@ -1,0 +1,46 @@
+{
+  "pageContent": {
+    "generalInfo": "Welcome to the Bishop Estates Cabana Club!",
+    "poolInfo": "Our beautiful pool is open daily from 9 AM to 8 PM. Remember to follow all posted rules.\n\n\nnext ",
+    "updates": "Exciting news! We're starting renovations soon. Stay tuned for progress reports.",
+    "joiningInfo": {
+      "title": "Become a Memberdffdsafdsa",
+      "text": "Join our vibrant community! Fill out the form below to get started.fdaffsa",
+      "formLink": "/join"
+    }
+  },
+  "budget": {
+    "total": 200000,
+    "raised": 100000
+  },
+  "updatesList": [
+    {
+      "id": "1",
+      "date": "2026-03-27",
+      "title": "Pool Renovation Started",
+      "content": "We're excited to announce that our pool renovation project has officially begun. Phase 1 includes resurfacing the pool deck and updating the filtration system."
+    },
+    {
+      "id": "2",
+      "date": "2026-03-20",
+      "title": "Spring Membership Drive",
+      "content": "New members are joining at a record pace! We've raised $20,000 toward our $200,000 renovation budget. Thank you for your support!"
+    },
+    {
+      "id": "1774651581121",
+      "date": "2026-03-27",
+      "title": "fff",
+      "content": "23r232"
+    },
+    {
+      "id": "1774651587747",
+      "date": "2026-03-27",
+      "title": "f344",
+      "content": "rfwfewf"
+    }
+  ],
+  "calendar": {
+    "enabled": false,
+    "googleCalendarId": ""
+  }
+}

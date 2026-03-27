@@ -1,155 +1,87 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+interface AppData {
+  pageContent: {
+    generalInfo: string;
+    poolInfo: string;
+    updates: string;
+    joiningInfo: {
+      title: string;
+      text: string;
+      formLink: string;
+    };
+  };
+  budget: {
+    total: number;
+    raised: number;
+  };
+  calendar: {
+    enabled: boolean;
+    googleCalendarId: string;
+  };
+  updatesList?: Array<{
+    id: string;
+    date: string;
+    title: string;
+    content: string;
+  }>;
+}
+
 export default function Home() {
   const [bgImageIndex, setBgImageIndex] = useState(0);
+  const [appData, setAppData] = useState<AppData | null>(null);
+  const [activeTab, setActiveTab] = useState('pool'); // 'pool', 'join', 'updates'
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const poolImages = ['pool-bishop-estates.jpg', 'pool-family.jpg', 'pool-splash.jpg', 'pool-people.jpg', 'pool-outside.jpg'];
   
-  // Responsive styles to prevent overflow on mobile
-  const responsiveGridStyle = (cols: number) => ({
-    display: 'grid' as const,
-    gridTemplateColumns: cols === 2 ? 'repeat(auto-fit, minmax(200px, 1fr))' : 'repeat(auto-fit, minmax(150px, 1fr))',
-    gap: '16px'
-  });
-  
-  // Rotate background image every 8 seconds
+  // Load app data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        setAppData(data);
+        localStorage.setItem('appData', JSON.stringify(data));
+      } catch (error) {
+        console.error('Failed to load app data:', error);
+        const stored = localStorage.getItem('appData');
+        if (stored) {
+          setAppData(JSON.parse(stored));
+        } else {
+          setAppData({
+            pageContent: {
+              generalInfo: 'Welcome to the Bishop Estates Cabana Club!',
+              poolInfo: 'Our beautiful pool is open daily from 9 AM to 8 PM.',
+              updates: 'Pool renovations starting soon!',
+              joiningInfo: {
+                title: 'Become a Member',
+                text: 'Join our vibrant community!',
+                formLink: '/join'
+              }
+            },
+            budget: {
+              total: 200000,
+              raised: 20000
+            },
+            updatesList: [],
+            calendar: {
+              enabled: false,
+              googleCalendarId: ''
+            }
+          });
+        }
+      }
+    };
+    loadData();
+  }, []);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setBgImageIndex((prev) => (prev + 1) % poolImages.length);
     }, 8000);
     return () => clearInterval(interval);
   }, []);
-
-  const [showTerms, setShowTerms] = useState(false);
-  const [hasReadTerms, setHasReadTerms] = useState(false);
-  const [showGuestPolicy, setShowGuestPolicy] = useState(false);
-  const [hasReadGuestPolicy, setHasReadGuestPolicy] = useState(false);
-  const [showPartyPolicy, setShowPartyPolicy] = useState(false);
-  const [hasReadPartyPolicy, setHasReadPartyPolicy] = useState(false);
-  const [showSitterPolicy, setShowSitterPolicy] = useState(false);
-  const [hasReadSitterPolicy, setHasReadSitterPolicy] = useState(false);
-  const [showMembershipRules, setShowMembershipRules] = useState(false);
-  const [hasReadMembershipRules, setHasReadMembershipRules] = useState(false);
-  const [hasSitters, setHasSitters] = useState(false);
-  const [numAdults, setNumAdults] = useState(1);
-  const [numChildren, setNumChildren] = useState(0);
-  const canvasRefs = {};
-  
-  const getTodayDate = () => {
-    const today = new Date();
-    return {
-      month: String(today.getMonth() + 1),
-      day: String(today.getDate()),
-      year: String(today.getFullYear())
-    };
-  };
-
-  const today = getTodayDate();
-
-  const [formData, setFormData] = useState({
-    familyName: '',
-    priorKeyfobNumber: '',
-    address: { street: '', city: '', state: 'CA', zip: '' },
-    phone: '',
-    email: '',
-    altEmail: '',
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-    adults: [{ name: '' }, { name: '' }, { name: '' }, { name: '' }],
-    children: [
-      { name: '', month: today.month, day: today.day, year: today.year },
-      { name: '', month: today.month, day: today.day, year: today.year },
-      { name: '', month: today.month, day: today.day, year: today.year },
-      { name: '', month: today.month, day: today.day, year: today.year },
-    ],
-    additionalChildren: '',
-    sitters: [{ name: '' }, { name: '' }],
-    needsKeyfob: false,
-    acceptKeyfobFee: false,
-    acceptSitterPolicy: false,
-    acceptMembershipRules: false,
-    acceptGuestPolicy: false,
-    acceptPartyPolicy: false,
-    acceptTerms: false,
-    adultSignatures: [
-      { name: '', signMonth: today.month, signDay: today.day, signYear: today.year },
-      { name: '', signMonth: today.month, signDay: today.day, signYear: today.year },
-      { name: '', signMonth: today.month, signDay: today.day, signYear: today.year },
-      { name: '', signMonth: today.month, signDay: today.day, signYear: today.year },
-    ],
-    minorMemberNames: '',
-    parentGuardianName: '',
-    parentGuardianSignature: '',
-    minorSignMonth: today.month,
-    minorSignDay: today.day,
-    minorSignYear: today.year,
-    membershipLevel: 'family',
-    paymentMethod: 'card',
-    referral: false,
-    referralFamilyName: '',
-  });
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleNestedChange = (section, index, field, value) => {
-    setFormData((prev) => {
-      const updated = { ...prev };
-      updated[section][index][field] = value;
-      return updated;
-    });
-  };
-
-  const handleAddressChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      address: { ...prev.address, [field]: value },
-    }));
-  };
-
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: checked }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!hasReadTerms || !formData.acceptTerms) {
-      alert('You must read and accept the waiver agreement');
-      return;
-    }
-    if (!formData.acceptGuestPolicy) {
-      alert('You must accept the Guest Policy');
-      return;
-    }
-    if (!formData.acceptPartyPolicy) {
-      alert('You must accept the Party Policy');
-      return;
-    }
-    if (!formData.acceptMembershipRules) {
-      alert('You must accept the Membership Rules & FAQ');
-      return;
-    }
-    if (!formData.acceptSitterPolicy) {
-      alert('You must accept the Sitter Policy');
-      return;
-    }
-
-    const members = JSON.parse(localStorage.getItem('members') || '[]');
-    const newMember = {
-      id: Date.now(),
-      ...formData,
-      signupDate: new Date().toISOString(),
-      paymentStatus: 'pending',
-    };
-    members.push(newMember);
-    localStorage.setItem('members', JSON.stringify(members));
-    setSubmitted(true);
-    setTimeout(() => window.location.reload(), 2000);
-  };
 
   const bgStyle = {
     minHeight: '100vh',
@@ -183,6 +115,7 @@ export default function Home() {
           }} />
         ))}
       </div>
+
       {/* Water wave decorations */}
       <div style={{
         position: 'absolute',
@@ -197,16 +130,7 @@ export default function Home() {
         pointerEvents: 'none',
         zIndex: 1
       }}/>
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundImage: 'radial-gradient(circle at 15% 30%, rgba(255,255,255,0.2) 0%, transparent 40%), radial-gradient(circle at 85% 70%, rgba(255,255,255,0.15) 0%, transparent 35%)',
-        pointerEvents: 'none',
-        zIndex: 0
-      }}/>
+
       {/* Photo Carousel Hero */}
       <div style={{
         position: 'relative',
@@ -228,7 +152,6 @@ export default function Home() {
             display: 'block'
           }}
         />
-        {/* Overlay text */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -249,7 +172,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Header with Hero */}
+      {/* Header */}
       <header style={{ background: 'linear-gradient(135deg, rgba(0, 102, 204, 0.95) 0%, rgba(0, 204, 255, 0.95) 100%)', color: 'white', padding: '60px 20px', textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', position: 'relative', zIndex: 2 }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#fff', marginBottom: '12px', textShadow: '2px 2px 8px rgba(0,0,0,0.3)', letterSpacing: '0.5px' }}>
@@ -261,1078 +184,198 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Policies Modals */}
-      {showSitterPolicy && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '12px', maxWidth: '700px', maxHeight: '80vh', overflow: 'auto', padding: '32px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', marginBottom: '20px' }}>Sitter/Caregiver Policy</h2>
-            <div style={{ color: '#374151', lineHeight: '1.7', fontSize: '13px', marginBottom: '20px' }}>
-              <p style={{ marginBottom: '16px' }}><strong>Definition:</strong> Sitters or caregivers are adults who routinely care for minor children who live in the membership household.</p>
-              <p style={{ marginBottom: '12px', fontWeight: '600' }}>REQUIREMENTS</p>
-              <ul style={{ marginLeft: '20px', marginBottom: '16px' }}>
-                <li>Each sitter/caregiver must sign a liability waiver</li>
-                <li>Sitters/caregivers may only be present when caring for member children</li>
-                <li>Sitters/caregivers may NOT be present if adult members are present</li>
-                <li>All sitter/caregiver names must be listed on membership</li>
-              </ul>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setHasReadSitterPolicy(true);
-                setShowSitterPolicy(false);
-              }}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '14px',
-              }}
-            >
-              I Have Read & Understand
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showGuestPolicy && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '12px', maxWidth: '700px', maxHeight: '80vh', overflow: 'auto', padding: '32px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', marginBottom: '20px' }}>Guest Policy</h2>
-            <div style={{ color: '#374151', lineHeight: '1.7', fontSize: '13px', marginBottom: '20px' }}>
-              <p style={{ marginBottom: '16px', fontWeight: '600' }}>PURPOSE</p>
-              <p style={{ marginBottom: '16px' }}>Guidance for non-member guests at Bishop Estates Cabana Club.</p>
-              <p style={{ marginBottom: '12px', fontWeight: '600' }}>FEE & EXPIRATION</p>
-              <p style={{ marginBottom: '16px' }}>Every member household receives 10 guest passes per year at no charge. Additional passes: $3.00 each.</p>
-              <p style={{ marginBottom: '12px', fontWeight: '600' }}>LIMITATIONS</p>
-              <p style={{ marginBottom: '16px' }}>Up to 9 guests at any one time. More than 9 guests requires Party Policy rules.</p>
-              <p style={{ marginBottom: '12px', fontWeight: '600' }}>RESPONSIBILITIES</p>
-              <ul style={{ marginLeft: '20px', marginBottom: '16px' }}>
-                <li>All guests subject to Club policies</li>
-                <li>Members responsible for guest conduct</li>
-                <li>Members may not leave guests unattended</li>
-                <li>All guests must be accompanied by adult member</li>
-                <li>Each guest must sign waiver before entering</li>
-              </ul>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setHasReadGuestPolicy(true);
-                setShowGuestPolicy(false);
-              }}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '14px',
-              }}
-            >
-              I Have Read & Understand
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showPartyPolicy && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '12px', maxWidth: '700px', maxHeight: '80vh', overflow: 'auto', padding: '32px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', marginBottom: '20px' }}>Party Policy</h2>
-            <div style={{ color: '#374151', lineHeight: '1.7', fontSize: '13px', marginBottom: '20px' }}>
-              <p style={{ marginBottom: '16px' }}>Reserve the covered area or grass area to host parties for birthdays, BBQs, baby showers, etc.</p>
-              <p style={{ marginBottom: '12px', fontWeight: '600' }}>FEES & DEPOSITS</p>
-              <ul style={{ marginLeft: '20px', marginBottom: '16px' }}>
-                <li>Party Fee: $225</li>
-                <li>Refundable Cleaning Deposit: $50</li>
-                <li>Extra Lifeguard: $20-25/hour (1 per 10 swimmers; 1st included)</li>
-                <li>Extra Guests: $10 each (if approved beyond 25)</li>
-              </ul>
-              <p style={{ marginBottom: '12px', fontWeight: '600' }}>GUIDELINES</p>
-              <ul style={{ marginLeft: '20px', marginBottom: '16px' }}>
-                <li>Max 3 hours (unless approved)</li>
-                <li>Max 25 guests (unless approved)</li>
-                <li>Follow city noise ordinances</li>
-                <li>NO alcohol or drugs</li>
-                <li>All guests must sign waiver</li>
-              </ul>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setHasReadPartyPolicy(true);
-                setShowPartyPolicy(false);
-              }}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '14px',
-              }}
-            >
-              I Have Read & Understand
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showTerms && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '12px', maxWidth: '700px', maxHeight: '80vh', overflow: 'auto', padding: '32px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', marginBottom: '20px' }}>Membership Liability Waiver & Release</h2>
-            <div style={{ color: '#374151', lineHeight: '1.7', fontSize: '13px', marginBottom: '20px', maxHeight: '60vh', overflowY: 'auto' }}>
-              <p style={{ marginBottom: '16px', fontWeight: '600' }}>As a member of Bishop Estates Cabana Club located at 1812 Jefferson Street, Concord, CA 94521, I acknowledge and agree that my membership is conditioned upon my acceptance of all terms, conditions and agreements.</p>
-
-              <h4 style={{ fontWeight: '600', marginTop: '16px', marginBottom: '8px' }}>1. Assumption of Risks</h4>
-              <p style={{ marginBottom: '12px' }}>I acknowledge that swimming is an inherently dangerous activity. There is NO LIFEGUARD on duty at most times. I am physically and mentally fit for swimming and agree not to swim under the influence of alcohol or drugs. I assume ALL RISKS of bodily injury or death.</p>
-
-              <h4 style={{ fontWeight: '600', marginTop: '16px', marginBottom: '8px' }}>2. Waive All Claims</h4>
-              <p style={{ marginBottom: '12px' }}>I RELEASE, WAIVE, DISCHARGE AND COVENANT NOT TO SUE the Club from any and all liability for injury, death, or property damage.</p>
-
-              <h4 style={{ fontWeight: '600', marginTop: '16px', marginBottom: '8px' }}>3. Hold Harmless</h4>
-              <p style={{ marginBottom: '12px' }}>I agree to DEFEND, INDEMNIFY AND HOLD HARMLESS the Club against all losses, claims, demands, and damages.</p>
-
-              <h4 style={{ fontWeight: '600', marginTop: '16px', marginBottom: '8px' }}>4. Rules & Conduct</h4>
-              <p style={{ marginBottom: '12px' }}>I agree to follow all Club rules. Key rules: no running on deck, no diving in shallow areas, children under 12 must be supervised, no glass, no alcohol/drugs, respect swim team times.</p>
-
-              <h4 style={{ fontWeight: '600', marginTop: '16px', marginBottom: '8px' }}>5. Medical Authorization</h4>
-              <p style={{ marginBottom: '12px' }}>In the event of injury, I authorize the Club to make medical care decisions.</p>
-
-              <h4 style={{ fontWeight: '600', marginTop: '16px', marginBottom: '8px' }}>6. Minors</h4>
-              <p style={{ marginBottom: '12px' }}>I represent that I am the parent/legal guardian with authority to agree to these terms on behalf of all minors in my household.</p>
-
-              <h4 style={{ fontWeight: '600', marginTop: '16px', marginBottom: '8px' }}>7. COVID-19 Release</h4>
-              <p style={{ marginBottom: '12px' }}>I assume full responsibility for any risk of exposure to or contraction of COVID-19.</p>
-
-              <p style={{ marginTop: '20px', fontSize: '12px', color: '#6b7280', fontStyle: 'italic' }}>
-                I HAVE READ THIS WAIVER IN FULL, UNDERSTAND ITS TERMS, AND HAVE SIGNED FREELY AND VOLUNTARILY.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setHasReadTerms(true);
-                setShowTerms(false);
-              }}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '14px',
-              }}
-            >
-              I Have Read & Understand
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showMembershipRules && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '12px', maxWidth: '700px', maxHeight: '80vh', overflow: 'auto', padding: '32px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', marginBottom: '20px' }}>Membership Rules & FAQ</h2>
-            <div style={{ color: '#374151', lineHeight: '1.7', fontSize: '13px', marginBottom: '20px' }}>
-              <p style={{ marginBottom: '16px', fontWeight: '600' }}>MEMBERSHIP BENEFITS</p>
-              <ul style={{ marginLeft: '20px', marginBottom: '16px' }}>
-                <li>Unlimited access to pool during operating hours</li>
-                <li>Access to changing facilities & lockers</li>
-                <li>Participation in swim team (Barracudas)</li>
-                <li>Ability to host member-only parties</li>
-                <li>Priority booking for reserved areas</li>
-              </ul>
-              
-              <p style={{ marginBottom: '12px', fontWeight: '600' }}>MEMBERSHIP RULES</p>
-              <ul style={{ marginLeft: '20px', marginBottom: '16px' }}>
-                <li>Members must be in good standing (fees paid)</li>
-                <li>Guests must be accompanied by member at all times</li>
-                <li>Pool hours: Dawn to Dusk (seasonal)</li>
-                <li>NO running, horseplay, or diving in shallow end</li>
-                <li>NO glass containers, alcohol, or drugs</li>
-                <li>NO pets (service animals allowed)</li>
-                <li>Children under 8 require constant supervision</li>
-                <li>Photography/recording requires consent</li>
-              </ul>
-
-              <p style={{ marginBottom: '12px', fontWeight: '600' }}>FREQUENTLY ASKED QUESTIONS</p>
-              <p style={{ marginBottom: '12px' }}><strong>Q: Can I bring guests?</strong><br/>A: Yes! Guests must be accompanied by you and sign a waiver.</p>
-              <p style={{ marginBottom: '12px' }}><strong>Q: When is the pool open?</strong><br/>A: Dawn to Dusk daily during season. Hours may vary seasonally.</p>
-              <p style={{ marginBottom: '12px' }}><strong>Q: Is there a swim team?</strong><br/>A: Yes! The Barracuda Swim Team practices 4-7:30pm. Pool is closed during practices.</p>
-              <p style={{ marginBottom: '12px' }}><strong>Q: Can I host a private event?</strong><br/>A: Yes! Party packages available. Contact management for details and pricing.</p>
-              <p style={{ marginBottom: '12px' }}><strong>Q: What if I lose my key fob?</strong><br/>A: Replacement fee is $15. Contact management for a new one.</p>
-              <p style={{ marginBottom: '12px' }}><strong>Q: Are refunds available?</strong><br/>A: Membership is non-refundable. You may transfer to another household member.</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setHasReadMembershipRules(true);
-                setShowMembershipRules(false);
-              }}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '14px',
-              }}
-            >
-              I Have Read & Understand
-            </button>
-          </div>
-        </div>
-      )}
-
-      <main style={{ position: 'relative', zIndex: 2, margin: '0', padding: '0', width: '100vw', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden', width: '100%', maxWidth: '1100px', margin: '20px', boxSizing: 'border-box' }}>
-          {/* Progress Bar */}
-          <div style={{ height: '4px', background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)' }} />
-
-          <div style={{ padding: '20px' }}>
-            {submitted && (
-              <div style={{ marginBottom: '24px', padding: '20px', background: 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)', border: '2px solid #4ade80', borderRadius: '12px', color: '#166534', fontWeight: '600', fontSize: '16px', textAlign: 'center' }}>
-                ✅ Registration submitted! Check your email for confirmation.
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-              {/* Contact Info */}
-              <section>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '28px', marginRight: '12px' }}>📋</div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Contact Information</h3>
+      {/* Main Content Container */}
+      {appData && (
+        <div style={{ position: 'relative', zIndex: 2, margin: '20px auto', maxWidth: '1200px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          
+          {/* Left: Calendar + Budget */}
+          <div>
+              <div style={{ padding: '24px', background: 'white', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', marginBottom: '20px', overflow: 'hidden' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#667eea', marginBottom: '16px', textAlign: 'center' }}>📅 Club Events</h3>
+                <div style={{ position: 'relative', paddingBottom: '75%', height: '0', overflow: 'hidden', maxWidth: '100%' }}>
+                  <iframe 
+                    src="https://calendar.google.com/calendar/embed?src=bishopestatescabanaclub%40gmail.com&ctz=America%2FLos_Angeles" 
+                    style={{ 
+                      position: 'absolute', 
+                      top: '0', 
+                      left: '0', 
+                      width: '100%', 
+                      height: '100%', 
+                      border: '0' 
+                    }} 
+                    allowFullScreen={true} 
+                    sandbox="allow-scripts allow-same-origin allow-popups"
+                    title="Bishop Estates Cabana Club Calendar">
+                  </iframe>
                 </div>
-                <div style={responsiveGridStyle(2)}>
-                  <input
-                    type="text"
-                    name="familyName"
-                    placeholder="Family Name *"
-                    value={formData.familyName}
-                    onChange={handleInputChange}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1', transition: 'border-color 0.2s' }}
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Street Address *"
-                    value={formData.address.street}
-                    onChange={(e) => handleAddressChange('street', e.target.value)}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="City *"
-                    value={formData.address.city}
-                    onChange={(e) => handleAddressChange('city', e.target.value)}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px' }}
-                    required
-                  />
-                  <select
-                    value={formData.address.state}
-                    onChange={(e) => handleAddressChange('state', e.target.value)}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px' }}
-                  >
-                    <option>CA</option>
-                    <option>Other</option>
-                  </select>
-                  <input
-                    type="text"
-                    placeholder="Zip Code *"
-                    value={formData.address.zip}
-                    onChange={(e) => handleAddressChange('zip', e.target.value)}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px' }}
-                    required
-                  />
-                  <input
-                    type="tel"
-                    name="phone"
-                    placeholder="Phone Number *"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
-                    required
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Email *"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
-                    required
-                  />
-                  <input
-                    type="email"
-                    name="altEmail"
-                    placeholder="Alternative Email (optional)"
-                    value={formData.altEmail}
-                    onChange={handleInputChange}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
-                  />
-                  <input
-                    type="text"
-                    name="emergencyContactName"
-                    placeholder="Emergency Contact Name *"
-                    value={formData.emergencyContactName}
-                    onChange={handleInputChange}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
-                    required
-                  />
-                  <input
-                    type="tel"
-                    name="emergencyContactPhone"
-                    placeholder="Emergency Contact Phone *"
-                    value={formData.emergencyContactPhone}
-                    onChange={handleInputChange}
-                    style={{ padding: '14px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
-                    required
-                  />
-                </div>
-              </section>
-
-              {/* Adults */}
-              <section>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '28px', marginRight: '12px' }}>👨‍👩‍👧</div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Family Members</h3>
-                </div>
-                
-                <div style={{ marginBottom: '20px', padding: '16px', background: '#f0f4ff', borderRadius: '8px', border: '2px solid #dbeafe' }}>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-                    How many adults in your household?
-                  </label>
-                  <select
-                    value={numAdults}
-                    onChange={(e) => setNumAdults(parseInt(e.target.value))}
-                    style={{ padding: '12px', border: '2px solid #dbeafe', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px' }}
-                  >
-                    {[1, 2, 3, 4].map((num) => (
-                      <option key={num} value={num}>
-                        {num} adult{num > 1 ? 's' : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-                  {Array.from({ length: numAdults }).map((_, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      placeholder={`Adult #${index + 1} Name *`}
-                      value={formData.adults[index]?.name || ''}
-                      onChange={(e) => handleNestedChange('adults', index, 'name', e.target.value)}
-                      style={{ padding: '12px', border: '2px solid #e5e7eb', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px' }}
-                      required
-                    />
-                  ))}
-                </div>
-
-                <div style={{ marginBottom: '20px', padding: '16px', background: '#fef3f2', borderRadius: '8px', border: '2px solid #fee2e2' }}>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-                    How many children under 18?
-                  </label>
-                  <select
-                    value={numChildren}
-                    onChange={(e) => setNumChildren(parseInt(e.target.value))}
-                    style={{ padding: '12px', border: '2px solid #fee2e2', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px' }}
-                  >
-                    {[0, 1, 2, 3, 4, 5].map((num) => (
-                      <option key={num} value={num}>
-                        {num === 0 ? 'None' : `${num} child${num > 1 ? 'ren' : ''}`}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {numChildren > 0 && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {Array.from({ length: numChildren }).map((_, index) => (
-                      <div key={index} style={{ padding: '16px', background: 'linear-gradient(135deg, #fef3f2 0%, #fef5f1 100%)', border: '2px solid #fee2e2', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        <input
-                          type="text"
-                          placeholder={`Child #${index + 1} Name *`}
-                          value={formData.children[index]?.name || ''}
-                          onChange={(e) => handleNestedChange('children', index, 'name', e.target.value)}
-                          style={{ padding: '10px', border: '2px solid #fee2e2', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px' }}
-                          required
-                        />
-                        <select
-                          value={formData.children[index]?.month || ''}
-                          onChange={(e) => handleNestedChange('children', index, 'month', e.target.value)}
-                          style={{ padding: '10px', border: '2px solid #fee2e2', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px' }}
-                          required
-                        >
-                          <option value="">Month</option>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                            <option key={m} value={m}>
-                              {new Date(2000, m - 1).toLocaleDateString('en-US', { month: 'short' })}
-                            </option>
-                          ))}
-                        </select>
-                        <select
-                          value={formData.children[index]?.day || ''}
-                          onChange={(e) => handleNestedChange('children', index, 'day', e.target.value)}
-                          style={{ padding: '10px', border: '2px solid #fee2e2', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px' }}
-                          required
-                        >
-                          <option value="">Day</option>
-                          {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                            <option key={d} value={d}>
-                              {d}
-                            </option>
-                          ))}
-                        </select>
-                        <select
-                          value={formData.children[index]?.year || ''}
-                          onChange={(e) => handleNestedChange('children', index, 'year', e.target.value)}
-                          style={{ padding: '10px', border: '2px solid #fee2e2', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px' }}
-                          required
-                        >
-                          <option value="">Year</option>
-                          {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                            <option key={y} value={y}>
-                              {y}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-
-              {/* Sitters */}
-              <section>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '28px', marginRight: '12px' }}>👶</div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Sitter/Caregiver</h3>
-                </div>
-                
-                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', padding: '16px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff', marginBottom: '16px' }}>
-                  <input
-                    type="checkbox"
-                    checked={hasSitters}
-                    onChange={(e) => setHasSitters(e.target.checked)}
-                    style={{ width: '24px', height: '24px', cursor: 'pointer' }}
-                  />
-                  <span style={{ fontSize: '14px', fontWeight: '600', color: '#374151' }}>
-                    I will use a sitter/caregiver
-                  </span>
-                </label>
-
-                {hasSitters && (
-                  <>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
-                      {[0, 1].map((index) => (
-                        <input
-                          key={index}
-                          type="text"
-                          placeholder={`Sitter/Caregiver #${index + 1} Name`}
-                          value={formData.sitters[index]?.name || ''}
-                          onChange={(e) => handleNestedChange('sitters', index, 'name', e.target.value)}
-                          style={{ padding: '12px', border: '2px solid #dbeafe', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px' }}
-                        />
-                      ))}
-                    </div>
-                    <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff' }}>
-                      <input
-                        type="checkbox"
-                        name="acceptSitterPolicy"
-                        checked={formData.acceptSitterPolicy}
-                        onChange={handleCheckboxChange}
-                        disabled={!hasReadSitterPolicy}
-                        style={{ marginTop: '4px', width: '20px', height: '20px', cursor: hasReadSitterPolicy ? 'pointer' : 'not-allowed' }}
-                        required
-                      />
-                      <div style={{ fontSize: '13px', color: '#374151' }}>
-                        I acknowledge the Sitter/Caregiver Policy *
-                        <button
-                          type="button"
-                          onClick={() => setShowSitterPolicy(true)}
-                          style={{ fontSize: '12px', color: '#667eea', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px', display: 'block', fontWeight: '600' }}
-                        >
-                          Read policy →
-                        </button>
-                      </div>
-                    </label>
-                  </>
-                )}
-              </section>
-
-              {/* Gate Access */}
-              <section>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '28px', marginRight: '12px' }}>🔑</div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Gate Access</h3>
-                </div>
-                <div style={{ marginBottom: '16px' }}>
-                  <input
-                    type="text"
-                    name="priorKeyfobNumber"
-                    placeholder="Prior Member Key Fob # (optional)"
-                    value={formData.priorKeyfobNumber}
-                    onChange={handleInputChange}
-                    style={{ padding: '12px', border: '2px solid #fee2e2', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', width: '100%', boxSizing: 'border-box', background: '#fef3f2' }}
-                  />
-                </div>
-                <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '16px', border: '2px solid #fee2e2', borderRadius: '8px', background: '#fef3f2', marginBottom: '12px' }}>
-                  <input
-                    type="checkbox"
-                    name="needsKeyfob"
-                    checked={formData.needsKeyfob}
-                    onChange={handleCheckboxChange}
-                    style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
-                  />
-                  <div>
-                    <p style={{ color: '#1f2937', fontWeight: '600', fontSize: '14px', margin: 0 }}>I need a NEW keyfob (+$15)</p>
-                    <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '4px', margin: 0 }}>New members or lost keyfob</p>
-                  </div>
-                </label>
-                {formData.needsKeyfob && (
-                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #fee2e2', borderRadius: '8px', background: '#fef3f2' }}>
-                    <input
-                      type="checkbox"
-                      name="acceptKeyfobFee"
-                      checked={formData.acceptKeyfobFee}
-                      onChange={handleCheckboxChange}
-                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
-                      required
-                    />
-                    <span style={{ fontSize: '13px', color: '#374151' }}>I agree to the $15 keyfob replacement fee *</span>
-                  </label>
-                )}
-              </section>
-
-              {/* Policies & Legal Agreement */}
-              <section>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '28px', marginRight: '12px' }}>📜</div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Policies</h3>
-                </div>
-                <div style={{ padding: '16px', background: '#fef3f2', border: '2px solid #fca5a5', borderRadius: '8px', marginBottom: '16px' }}>
-                  <p style={{ color: '#991b1b', fontSize: '14px', fontWeight: '600', margin: 0 }}>
-                    ⚠️ You must read each policy before accepting
-                  </p>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff' }}>
-                    <input
-                      type="checkbox"
-                      name="acceptMembershipRules"
-                      checked={formData.acceptMembershipRules}
-                      onChange={handleCheckboxChange}
-                      disabled={!hasReadMembershipRules}
-                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: hasReadMembershipRules ? 'pointer' : 'not-allowed' }}
-                      required
-                    />
-                    <div style={{ fontSize: '13px', color: '#374151' }}>
-                      I accept the{' '}
-                      <button
-                        type="button"
-                        onClick={() => setShowMembershipRules(true)}
-                        style={{ color: '#667eea', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontWeight: '600', fontSize: '13px' }}
-                      >
-                        Membership Rules & FAQ
-                      </button>
-                      {' '}*
-                    </div>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff' }}>
-                    <input
-                      type="checkbox"
-                      name="acceptGuestPolicy"
-                      checked={formData.acceptGuestPolicy}
-                      onChange={handleCheckboxChange}
-                      disabled={!hasReadGuestPolicy}
-                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: hasReadGuestPolicy ? 'pointer' : 'not-allowed' }}
-                      required
-                    />
-                    <div style={{ fontSize: '13px', color: '#374151' }}>
-                      I accept the Guest Policy *
-                      <button
-                        type="button"
-                        onClick={() => setShowGuestPolicy(true)}
-                        style={{ fontSize: '12px', color: '#667eea', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px', display: 'block', fontWeight: '600' }}
-                      >
-                        Read policy →
-                      </button>
-                    </div>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff' }}>
-                    <input
-                      type="checkbox"
-                      name="acceptPartyPolicy"
-                      checked={formData.acceptPartyPolicy}
-                      onChange={handleCheckboxChange}
-                      disabled={!hasReadPartyPolicy}
-                      style={{ marginTop: '4px', width: '20px', height: '20px', cursor: hasReadPartyPolicy ? 'pointer' : 'not-allowed' }}
-                      required
-                    />
-                    <div style={{ fontSize: '13px', color: '#374151' }}>
-                      I accept the Party Policy *
-                      <button
-                        type="button"
-                        onClick={() => setShowPartyPolicy(true)}
-                        style={{ fontSize: '12px', color: '#667eea', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px', display: 'block', fontWeight: '600' }}
-                      >
-                        Read policy →
-                      </button>
-                    </div>
-                  </label>
-                </div>
-              </section>
-
-              {/* Keyfob */}
-              {/* Legal Agreement */}
-              <div style={{ marginTop: '32px', padding: '32px', background: 'linear-gradient(135deg, #f0f4ff 0%, #f5f1ff 100%)', borderRadius: '12px', border: '2px solid #dbeafe' }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
-                  <div style={{ fontSize: '28px', marginRight: '12px' }}>✍️</div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Legal Agreement</h3>
-                </div>
-                {!hasReadTerms && (
-                  <div style={{ padding: '16px', background: '#fef3f2', border: '2px solid #fca5a5', borderRadius: '8px', marginBottom: '16px' }}>
-                    <p style={{ color: '#991b1b', fontSize: '14px', fontWeight: '600', margin: 0 }}>
-                      ⚠️ You must read the waiver before agreeing
-                    </p>
-                  </div>
-                )}
-                <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: hasReadTerms ? 'pointer' : 'not-allowed', padding: '16px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff', opacity: hasReadTerms ? 1 : 0.6, marginBottom: '12px' }}>
-                  <input
-                    type="checkbox"
-                    name="acceptTerms"
-                    checked={formData.acceptTerms}
-                    onChange={handleCheckboxChange}
-                    disabled={!hasReadTerms}
-                    style={{ marginTop: '4px', width: '20px', height: '20px', cursor: hasReadTerms ? 'pointer' : 'not-allowed' }}
-                    required
-                  />
-                  <div>
-                    <p style={{ color: '#1f2937', fontWeight: '600', fontSize: '14px', margin: 0 }}>
-                      I have read and agree to the Waiver *
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setShowTerms(true)}
-                      style={{ color: '#667eea', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', padding: 0, marginTop: '4px', fontWeight: '600' }}
-                    >
-                      Read full waiver
-                    </button>
-                  </div>
-                </label>
               </div>
 
-              {/* Adult Signatures */}
-              <section>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '28px', marginRight: '12px' }}>👤</div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Signatures</h3>
+            {/* Budget Progress */}
+            <div style={{ padding: '24px', background: 'linear-gradient(135deg, #f0f4ff 0%, #f5f1ff 100%)', borderRadius: '12px', border: '2px solid #dbeafe', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#667eea', marginBottom: '16px' }}>💰 Renovation Budget</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '20px', background: 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)', borderRadius: '12px', border: '2px dashed #2563eb', marginBottom: '20px', position: 'relative', overflow: 'hidden' }}>
+                <h4 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1e3a8a', marginBottom: '12px', textShadow: '1px 1px 2px rgba(255,255,255,0.7)' }}>
+                  Help Us Make a Splash! 🌊
+                </h4>
+                
+                {/* Pool Transformation Meter */}
+                <div style={{ width: '90%', maxWidth: '600px', height: '60px', background: 'rgba(255,255,255,0.3)', borderRadius: '30px', border: '2px solid rgba(255,255,255,0.6)', position: 'relative', margin: '10px auto 20px auto', overflow: 'hidden' }}>
+                  {/* Water Level */}
+                  <div style={{ 
+                    width: `${Math.min(100, (appData.budget.raised / appData.budget.total) * 100)}%`, 
+                    height: '100%', 
+                    background: 'linear-gradient(180deg, rgba(79, 172, 254, 0.8) 0%, rgba(40, 118, 251, 0.8) 100%)', 
+                    position: 'absolute', 
+                    bottom: 0, 
+                    left: 0, 
+                    transition: 'width 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)', // Fun, bouncy transition
+                    borderRadius: '30px 30px 0 0' // Rounded on top only
+                  }}></div>
+                  {/* Milestone Markers (approximate placement) */}
+                  <span style={{ position: 'absolute', bottom: '70%', left: '25%', fontSize: '11px', color: 'white', fontWeight: '600', textShadow: '1px 1px 1px rgba(0,0,0,0.5)' }}>Resurf.</span>
+                  <span style={{ position: 'absolute', bottom: '70%', left: '50%', fontSize: '11px', color: 'white', fontWeight: '600', textShadow: '1px 1px 1px rgba(0,0,0,0.5)' }}>Pumps</span>
+                  <span style={{ position: 'absolute', bottom: '70%', left: '75%', fontSize: '11px', color: 'white', fontWeight: '600', textShadow: '1px 1px 1px rgba(0,0,0,0.5)' }}>Filters</span>
+                  <span style={{ position: 'absolute', bottom: '70%', left: '95%', fontSize: '11px', color: 'white', fontWeight: '600', textShadow: '1px 1px 1px rgba(0,0,0,0.5)' }}>{appData.budget.raised >= appData.budget.total ? 'DONE!' : 'Extras'}</span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'stretch', width: '100%', paddingLeft: 0, paddingRight: 0 }}>
-                  {Array.from({ length: numAdults }).map((_, index) => (
-                    <div key={index} style={{ padding: '20px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff', width: '100%', boxSizing: 'border-box' }}>
-                      <p style={{ fontSize: '14px', fontWeight: '600', color: '#667eea', marginBottom: '16px' }}>Member #{index + 1}</p>
-                      
-                      <div style={{ marginBottom: '16px' }}>
-                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Full Name *</label>
-                        <input
-                          type="text"
-                          placeholder="First and Last Name"
-                          value={formData.adultSignatures[index]?.name || ''}
-                          onChange={(e) => handleNestedChange('adultSignatures', index, 'name', e.target.value)}
-                          style={{ padding: '12px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%', boxSizing: 'border-box' }}
-                          required
-                        />
-                      </div>
 
-                      <div style={{ marginBottom: '16px', width: '100%' }}>
-                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Draw Signature Below *</label>
-                        <div style={{ border: '2px solid #dbeafe', borderRadius: '6px', background: 'white', cursor: 'crosshair', overflow: 'hidden', width: '100%' }}>
-                          <canvas
-                            ref={(el) => { if (el) canvasRefs[`sig-${index}`] = el; }}
-                            width={800}
-                            height={150}
-                            onMouseDown={(e) => {
-                              const canvas = canvasRefs[`sig-${index}`];
-                              const ctx = canvas.getContext('2d');
-                              const rect = canvas.getBoundingClientRect();
-                              const scaleX = canvas.width / rect.width;
-                              const scaleY = canvas.height / rect.height;
-                              ctx.beginPath();
-                              ctx.moveTo((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
-                            }}
-                            onMouseMove={(e) => {
-                              if (e.buttons === 1) {
-                                const canvas = canvasRefs[`sig-${index}`];
-                                const ctx = canvas.getContext('2d');
-                                const rect = canvas.getBoundingClientRect();
-                                const scaleX = canvas.width / rect.width;
-                                const scaleY = canvas.height / rect.height;
-                                ctx.lineWidth = 2.5;
-                                ctx.lineCap = 'round';
-                                ctx.lineJoin = 'round';
-                                ctx.strokeStyle = '#667eea';
-                                ctx.lineTo((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
-                                ctx.stroke();
-                              }
-                            }}
-                            onTouchStart={(e) => {
-                              const canvas = canvasRefs[`sig-${index}`];
-                              const ctx = canvas.getContext('2d');
-                              const rect = canvas.getBoundingClientRect();
-                              const touch = e.touches[0];
-                              const scaleX = canvas.width / rect.width;
-                              const scaleY = canvas.height / rect.height;
-                              ctx.beginPath();
-                              ctx.moveTo((touch.clientX - rect.left) * scaleX, (touch.clientY - rect.top) * scaleY);
-                            }}
-                            onTouchMove={(e) => {
-                              e.preventDefault();
-                              const canvas = canvasRefs[`sig-${index}`];
-                              const ctx = canvas.getContext('2d');
-                              const rect = canvas.getBoundingClientRect();
-                              const touch = e.touches[0];
-                              const scaleX = canvas.width / rect.width;
-                              const scaleY = canvas.height / rect.height;
-                              ctx.lineWidth = 2.5;
-                              ctx.lineCap = 'round';
-                              ctx.lineJoin = 'round';
-                              ctx.strokeStyle = '#667eea';
-                              ctx.lineTo((touch.clientX - rect.left) * scaleX, (touch.clientY - rect.top) * scaleY);
-                              ctx.stroke();
-                            }}
-                            style={{ display: 'block', width: '100%', height: 'auto', touchAction: 'none' }}
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const canvas = canvasRefs[`sig-${index}`];
-                            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                          }}
-                          style={{ fontSize: '12px', color: '#667eea', background: 'none', border: 'none', cursor: 'pointer', marginTop: '8px', textDecoration: 'underline', fontWeight: '600' }}
-                        >
-                          Clear signature
-                        </button>
-                      </div>
+                <p style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600', margin: '0 0 10px 0' }}>
+                  Donated: ${appData.budget.raised.toLocaleString()} / Goal: ${appData.budget.total.toLocaleString()}
+                </p>
+                
+                <p style={{ fontSize: '11px', color: '#1e3a8a', fontWeight: 'bold' }}>
+                  {((appData.budget.raised / appData.budget.total) * 100).toFixed(1)}% Funded - Every drop counts! 💧
+                </p>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                        <div>
-                          <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Month *</label>
-                          <select
-                            value={formData.adultSignatures[index]?.signMonth || ''}
-                            onChange={(e) => handleNestedChange('adultSignatures', index, 'signMonth', e.target.value)}
-                            style={{ padding: '10px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
-                            required
-                          >
-                            <option value="">Month</option>
-                            {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                              <option key={m} value={m}>
-                                {new Date(2000, m - 1).toLocaleDateString('en-US', { month: 'short' })}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Day *</label>
-                          <select
-                            value={formData.adultSignatures[index]?.signDay || ''}
-                            onChange={(e) => handleNestedChange('adultSignatures', index, 'signDay', e.target.value)}
-                            style={{ padding: '10px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
-                            required
-                          >
-                            <option value="">Day</option>
-                            {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                              <option key={d} value={d}>
-                                {d}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Year *</label>
-                          <select
-                            value={formData.adultSignatures[index]?.signYear || ''}
-                            onChange={(e) => handleNestedChange('adultSignatures', index, 'signYear', e.target.value)}
-                            style={{ padding: '10px', border: '2px solid #dbeafe', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
-                            required
-                          >
-                            <option value="">Year</option>
-                            {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                              <option key={y} value={y}>
-                                {y}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* Minor Signatures */}
-              {numChildren > 0 && (
-                <section>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                    <div style={{ fontSize: '28px', marginRight: '12px' }}>👶</div>
-                    <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#764ba2', margin: 0 }}>Minor Member Waiver</h3>
-                  </div>
-                  <textarea
-                    name="minorMemberNames"
-                    placeholder="Names of all minors in household"
-                    value={formData.minorMemberNames}
-                    onChange={handleInputChange}
-                    style={{ padding: '12px', border: '2px solid #f9a8d4', borderRadius: '8px', fontFamily: 'inherit', fontSize: '14px', minHeight: '60px', width: '100%', marginBottom: '12px', background: '#fdf0f6' }}
+                <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <img 
+                    src="/venmo-qr.png" 
+                    alt="Venmo QR Code for Donations" 
+                    style={{ 
+                      width: '250px', 
+                      height: '250px', 
+                      maxWidth: '100%', 
+                      objectFit: 'contain', 
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                    }} 
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null; // Prevent infinite loop
+                      target.style.display = 'none';
+                      if (target.parentElement && target.parentElement.nextSibling) {
+                        const errorMessage = document.createElement('p');
+                        errorMessage.style.color = '#9ca3af';
+                        errorMessage.style.fontSize = '11px';
+                        errorMessage.textContent = 'Add venmo-qr.png to /public/';
+                        target.parentElement.replaceChild(errorMessage, errorMessage);
+                      }
+                    }}
                   />
-                  <div style={{ padding: '16px', border: '2px solid #f9a8d4', borderRadius: '8px', background: '#fdf0f6', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
-                    <input
-                      type="text"
-                      name="parentGuardianName"
-                      placeholder="Parent/Guardian Name *"
-                      value={formData.parentGuardianName}
-                      onChange={handleInputChange}
-                      style={{ padding: '10px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
-                      required
-                    />
-                    <input
-                      type="text"
-                      name="parentGuardianSignature"
-                      placeholder="Parent/Guardian Signature"
-                      value={formData.parentGuardianSignature}
-                      onChange={handleInputChange}
-                      style={{ padding: '10px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', gridColumn: '1 / -1' }}
-                    />
-                    <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                      <div>
-                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Month</label>
-                        <select
-                          value={formData.minorSignMonth || ''}
-                          onChange={(e) => setFormData((prev) => ({ ...prev, minorSignMonth: e.target.value }))}
-                          style={{ padding: '8px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
-                        >
-                          <option value="">Month</option>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                            <option key={m} value={m}>
-                              {new Date(2000, m - 1).toLocaleDateString('en-US', { month: 'short' })}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Day</label>
-                        <select
-                          value={formData.minorSignDay || ''}
-                          onChange={(e) => setFormData((prev) => ({ ...prev, minorSignDay: e.target.value }))}
-                          style={{ padding: '8px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
-                        >
-                          <option value="">Day</option>
-                          {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                            <option key={d} value={d}>
-                              {d}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '6px', fontWeight: '600' }}>Year</label>
-                        <select
-                          value={formData.minorSignYear || ''}
-                          onChange={(e) => setFormData((prev) => ({ ...prev, minorSignYear: e.target.value }))}
-                          style={{ padding: '8px', border: '2px solid #f9a8d4', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%' }}
-                        >
-                          <option value="">Year</option>
-                          {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                            <option key={y} value={y}>
-                              {y}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              )}
-
-              {/* Membership & Payment */}
-              <section>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                  <div style={{ fontSize: '28px', marginRight: '12px' }}>💳</div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea', margin: 0 }}>Membership & Payment</h3>
+                  <p style={{ fontSize: '11px', color: '#1e3a8a', marginTop: '10px', fontWeight: '600' }}>Scan to Donate!</p>
                 </div>
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', padding: '16px', border: '2px solid', borderColor: formData.membershipLevel === 'family' ? '#667eea' : '#e5e7eb', borderRadius: '8px', background: formData.membershipLevel === 'family' ? '#f0f4ff' : 'white', cursor: 'pointer', marginBottom: '12px' }}>
-                    <input
-                      type="radio"
-                      name="membershipLevel"
-                      value="family"
-                      checked={formData.membershipLevel === 'family'}
-                      onChange={handleInputChange}
-                      style={{ marginRight: '12px', width: '20px', height: '20px' }}
-                    />
-                    <div>
-                      <p style={{ fontWeight: '600', color: '#1f2937', fontSize: '14px', margin: 0 }}>Family Membership</p>
-                      <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>$600 (early) / $575 (check, Venmo, cash)</p>
-                    </div>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', padding: '16px', border: '2px solid', borderColor: formData.membershipLevel === 'individual' ? '#667eea' : '#e5e7eb', borderRadius: '8px', background: formData.membershipLevel === 'individual' ? '#f0f4ff' : 'white', cursor: 'pointer' }}>
-                    <input
-                      type="radio"
-                      name="membershipLevel"
-                      value="individual"
-                      checked={formData.membershipLevel === 'individual'}
-                      onChange={handleInputChange}
-                      style={{ marginRight: '12px', width: '20px', height: '20px' }}
-                    />
-                    <div>
-                      <p style={{ fontWeight: '600', color: '#1f2937', fontSize: '14px', margin: 0 }}>Individual Membership</p>
-                      <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>$300/season</p>
-                    </div>
-                  </label>
-                </div>
+              </div>
+              <p style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600', marginBottom: '8px' }}>${appData.budget.raised.toLocaleString()} of ${appData.budget.total.toLocaleString()}</p>
+              <div style={{ width: '100%', height: '28px', background: '#e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
+                <div 
+                  style={{ 
+                    height: '100%', 
+                    width: `${Math.min(100, (appData.budget.raised / appData.budget.total) * 100)}%`,
+                    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                    transition: 'width 0.3s ease'
+                  }} 
+                />
+              </div>
+              <p style={{ fontSize: '14px', color: '#667eea', fontWeight: '600', marginTop: '8px' }}>{((appData.budget.raised / appData.budget.total) * 100).toFixed(1)}% Complete</p>
+            </div>
+          </div>
 
-                <div style={{ marginBottom: '20px' }}>
-                  <p style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937', marginBottom: '12px' }}>Payment Method</p>
-                  <label style={{ display: 'flex', alignItems: 'center', padding: '12px', border: '2px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', marginBottom: '8px', background: formData.paymentMethod === 'card' ? '#f0f4ff' : 'white' }}>
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="card"
-                      checked={formData.paymentMethod === 'card'}
-                      onChange={handleInputChange}
-                      style={{ marginRight: '12px' }}
-                    />
-                    <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}>💳 Credit Card / PayPal</span>
-                  </label>
-                  <label style={{ display: 'flex', flexDirection: 'column', padding: '12px', border: '2px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', marginBottom: '8px', background: formData.paymentMethod === 'venmo' ? '#f0f4ff' : 'white' }}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="venmo"
-                        checked={formData.paymentMethod === 'venmo'}
-                        onChange={handleInputChange}
-                        style={{ marginRight: '12px' }}
-                      />
-                      <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}>💰 Venmo</span>
-                    </div>
-                    {formData.paymentMethod === 'venmo' && (
-                      <div style={{ marginTop: '12px', padding: '16px', background: 'white', borderRadius: '6px', textAlign: 'center' }}>
-                        <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '12px', fontWeight: '600' }}>Scan QR Code</p>
-                        <div style={{ width: '180px', height: '180px', background: '#e5e7eb', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px', border: '2px solid #d1d5db' }}>
-                          <img 
-                            src="/venmo-qr.png" 
-                            alt="Venmo QR" 
-                            style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '4px' }}
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              if (target.parentElement) target.parentElement.innerHTML = '<p style="color: #9ca3af; font-size: 11px;">Add venmo-qr.png to /public/</p>';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', padding: '12px', border: '2px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', background: formData.paymentMethod === 'check' ? '#f0f4ff' : 'white' }}>
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="check"
-                      checked={formData.paymentMethod === 'check'}
-                      onChange={handleInputChange}
-                      style={{ marginRight: '12px' }}
-                    />
-                    <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}>✉️ Check / Cash</span>
-                  </label>
-                </div>
-
-                <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '2px solid #dbeafe', borderRadius: '8px', background: '#f0f4ff' }}>
-                  <input
-                    type="checkbox"
-                    name="referral"
-                    checked={formData.referral}
-                    onChange={handleCheckboxChange}
-                    style={{ marginTop: '4px', width: '20px', height: '20px', cursor: 'pointer' }}
-                  />
-                  <div style={{ width: '100%' }}>
-                    <p style={{ color: '#1f2937', fontWeight: '600', fontSize: '14px', margin: 0 }}>🎉 I'm referring a new family</p>
-                    <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '4px', margin: 0 }}>Get $100 credit (credited to Venmo once both pay)</p>
-                    {formData.referral && (
-                      <input
-                        type="text"
-                        placeholder="Name of family you're referring *"
-                        value={formData.referralFamilyName}
-                        onChange={(e) => setFormData({ ...formData, referralFamilyName: e.target.value })}
-                        style={{ marginTop: '12px', padding: '12px', border: '2px solid #667eea', borderRadius: '6px', fontFamily: 'inherit', fontSize: '14px', width: '100%', boxSizing: 'border-box' }}
-                        required={formData.referral}
-                      />
-                    )}
-                  </div>
-                </label>
-              </section>
-
-              {/* Submit */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ padding: '20px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '8px', color: 'white' }}>
-                  <p style={{ fontSize: '12px', margin: '0 0 8px 0' }}>Total Due:</p>
-                  <p style={{ fontSize: '28px', fontWeight: 'bold', margin: 0 }}>
-                    ${formData.membershipLevel === 'family' ? (formData.needsKeyfob ? 615 : 600) : (formData.needsKeyfob ? 315 : 300)}
-                  </p>
-                </div>
+          {/* Right: Tabs + Content */}
+          <div>
+            {/* Tabs */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', background: 'white', padding: '12px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+              {[
+                { id: 'pool', label: '🏊 Pool Info' },
+                { id: 'updates', label: '📢 Updates' },
+                { id: 'join', label: '🎉 Join' }
+              ].map(tab => (
                 <button
-                  type="submit"
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
                   style={{
-                    width: '100%',
-                    padding: '16px 48px',
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
+                    flex: 1,
+                    padding: '12px 16px',
+                    background: activeTab === tab.id ? '#667eea' : '#e5e7eb',
+                    color: activeTab === tab.id ? 'white' : '#374151',
                     border: 'none',
-                    borderRadius: '8px',
+                    borderRadius: '6px',
                     cursor: 'pointer',
-                    boxShadow: '0 8px 20px rgba(102, 126, 234, 0.3)',
+                    fontWeight: '600',
+                    fontSize: '14px',
+                    transition: 'all 0.2s'
                   }}
                 >
-                  Submit Registration →
+                  {tab.label}
                 </button>
-              </div>
-            </form>
+              ))}
+            </div>
 
-            {/* Admin Link */}
-            <div style={{ marginTop: '48px', paddingTop: '24px', borderTop: '2px solid #e5e7eb', textAlign: 'center' }}>
-              <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '8px' }}>👤 Admin?</p>
-              <Link href="/admin" style={{ color: '#667eea', fontWeight: 'bold', textDecoration: 'none', fontSize: '14px' }}>
-                Go to Admin Dashboard →
-              </Link>
+            {/* Tab Content */}
+            <div style={{ padding: '24px', background: 'white', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', minHeight: '400px' }}>
+              
+              {/* Pool Info Tab */}
+              {activeTab === 'pool' && (
+                <div>
+                  <h3 style={{ fontSize: '22px', fontWeight: 'bold', color: '#667eea', marginBottom: '12px' }}>Pool Information</h3>
+                  <p style={{ fontSize: '16px', color: '#374151', lineHeight: '1.6', marginBottom: '16px' }}>{appData.pageContent.poolInfo}</p>
+                  <div style={{ padding: '16px', background: '#f0f4ff', borderRadius: '8px', border: '1px solid #dbeafe' }}>
+                    <p style={{ fontSize: '14px', color: '#667eea', fontWeight: '600', margin: '0' }}>ℹ️ {appData.pageContent.generalInfo}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Updates Tab */}
+              {activeTab === 'updates' && (
+                <div>
+                  <h3 style={{ fontSize: '22px', fontWeight: 'bold', color: '#667eea', marginBottom: '16px' }}>Recent Updates</h3>
+                  {appData.updatesList && appData.updatesList.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {appData.updatesList.map(update => (
+                        <div key={update.id} style={{ padding: '16px', background: '#fef3f2', borderRadius: '8px', border: '1px solid #fee2e2' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
+                            <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#374151', margin: 0 }}>{update.title}</h4>
+                            <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500' }}>{update.date}</span>
+                          </div>
+                          <p style={{ fontSize: '14px', color: '#6b7280', lineHeight: '1.5', margin: 0 }}>{update.content}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ color: '#9ca3af', fontSize: '14px' }}>No updates yet. Check back soon!</p>
+                  )}
+                </div>
+              )}
+
+              {/* Join Tab */}
+              {activeTab === 'join' && (
+                <div>
+                  <h3 style={{ fontSize: '22px', fontWeight: 'bold', color: '#764ba2', marginBottom: '12px' }}>{appData.pageContent.joiningInfo.title}</h3>
+                  <p style={{ fontSize: '16px', color: '#374151', lineHeight: '1.6', marginBottom: '16px' }}>{appData.pageContent.joiningInfo.text}</p>
+                  <Link href="/join" style={{ display: 'inline-block', padding: '12px 24px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: '600' }}>
+                    Sign Up Now →
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </main>
+      )}
+
+      {/* Admin Link */}
+      <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', marginTop: '40px', marginBottom: '40px' }}>
+        <Link href="/admin" style={{ color: 'white', textDecoration: 'none', fontWeight: '600', padding: '10px 20px', background: 'rgba(0,0,0,0.3)', borderRadius: '6px' }}>
+          👤 Admin Dashboard
+        </Link>
+      </div>
     </div>
   );
 }
