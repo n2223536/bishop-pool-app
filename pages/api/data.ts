@@ -17,6 +17,18 @@ interface AppData {
     total: number;
     raised: number;
   };
+  updatesList?: Array<{
+    id: string;
+    date: string;
+    title: string;
+    content: string;
+  }>;
+  updatesList?: Array<{
+    id: string;
+    date: string;
+    title: string;
+    content: string;
+  }>;
   calendar: {
     enabled: boolean;
     googleCalendarId: string;
