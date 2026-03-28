@@ -17,6 +17,8 @@ interface AppData {
     total: number;
     raised: number;
   };
+  joinEnabled?: boolean;
+  carouselImages?: string[];
   updatesList?: Array<{
     id: string;
     date: string;
@@ -37,7 +39,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<AppDat
     res.status(200).json(data);
   } catch (error) {
     console.error('Error reading data.json:', error);
-    // Return default data if file doesn't exist
     res.status(200).json({
       pageContent: {
         generalInfo: 'Welcome to the Bishop Estates Cabana Club!',
@@ -53,10 +54,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<AppDat
         total: 200000,
         raised: 20000
       },
+      joinEnabled: false,
+      carouselImages: [],
       updatesList: [],
       calendar: {
-        enabled: false,
-        googleCalendarId: ''
+        enabled: true,
+        googleCalendarId: 'bishopestatescabanaclub@gmail.com'
       }
     });
   }

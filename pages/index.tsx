@@ -192,7 +192,7 @@ export default function Home() {
           <div>
               <div style={{ padding: '24px', background: 'white', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', marginBottom: '20px', overflow: 'hidden' }}>
                 <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#667eea', marginBottom: '16px', textAlign: 'center' }}>📅 Club Events</h3>
-                <div style={{ position: 'relative', paddingBottom: '75%', height: '0', overflow: 'hidden', maxWidth: '100%' }}>
+                <div style={{ position: 'relative', width: '100%', paddingBottom: '75%', height: '0', overflow: 'hidden', maxWidth: '100%' }}>
                   <iframe 
                     src="https://calendar.google.com/calendar/embed?src=bishopestatescabanaclub%40gmail.com&ctz=America%2FLos_Angeles" 
                     style={{ 
