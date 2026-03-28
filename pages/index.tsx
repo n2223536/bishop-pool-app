@@ -186,7 +186,7 @@ export default function Home() {
 
       {/* Main Content Container */}
       {appData && (
-        <div style={{ position: 'relative', zIndex: 2, margin: '20px auto', maxWidth: '1200px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        <div style={{ position: 'relative', zIndex: 2, margin: '20px auto', maxWidth: '1200px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
           
           {/* Left: Calendar + Budget */}
           <div>
