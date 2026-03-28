@@ -33,22 +33,6 @@ interface AppData {
 export default function Home() {
   const [bgImageIndex, setBgImageIndex] = useState(0);
   const [appData, setAppData] = useState<AppData | null>(null);
-
-  // Check if favicon exists
-  const [faviconExists, setFaviconExists] = useState(false);
-
-  useEffect(() => {
-    // Check if favicon exists
-    fetch('/favicon.ico')
-      .then(response => {
-        if (response.ok) {
-          setFaviconExists(true);
-        }
-      })
-      .catch(() => {
-        console.warn('Favicon not found');
-      });
-  }, []);
   
   // Load app data on component mount
   useEffect(() => {
@@ -113,13 +97,7 @@ export default function Home() {
   };
 
   return (
-    <>
-      <Head>
-        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-        {!faviconExists && <meta name="description" content="Favicon check failed" />}
-      </Head>
-      <div style={bgStyle}>
+    <div style={bgStyle}>
         {/* Background image carousel indicator */}
         <div style={{
           position: 'fixed',
