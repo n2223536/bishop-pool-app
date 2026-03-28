@@ -33,6 +33,7 @@ interface AppData {
 export default function Home() {
   const [bgImageIndex, setBgImageIndex] = useState(0);
   const [appData, setAppData] = useState<AppData | null>(null);
+  const [activeTab, setActiveTab] = useState('pool');
   
   // Load app data on component mount
   useEffect(() => {
