@@ -296,7 +296,7 @@ export default function Home() {
               {[
                 { id: 'pool', label: '🏊 Pool Info' },
                 { id: 'updates', label: '📢 Updates' },
-                { id: 'join', label: '🎉 Join' }
+                ...(appData && appData.joinEnabled ? [{ id: 'join', label: '🎉 Join' }] : [])
               ].map(tab => (
                 <button
                   key={tab.id}
