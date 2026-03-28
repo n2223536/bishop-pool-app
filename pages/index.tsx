@@ -16,6 +16,7 @@ interface AppData {
     total: number;
     raised: number;
   };
+  joinEnabled?: boolean;
   calendar: {
     enabled: boolean;
     googleCalendarId: string;
